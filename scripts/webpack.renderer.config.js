@@ -61,14 +61,22 @@ let rendererConfig = {
           'less-loader',
         ]
       },
-      {
-        test: /\.(sa|sc|c)ss$/,
-        use: [
-          env !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader,
-          'css-loader',
-          'sass-loader',
-        ],
-      },
+      /**
+       * node-sass always install failed, if you wanted to use sass, please flow this.
+       * 
+       * 1. npm --save-dev install node-sass sass-loader
+       * 2. cancel under the comment
+       * 3. It's fine.
+       * 
+       */
+      // {
+      //   test: /\.(sa|sc|c)ss$/,
+      //   use: [
+      //     env !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader,
+      //     'css-loader',
+      //     'sass-loader',
+      //   ],
+      // },
       {
         test: /\.html$/,
         use: 'vue-html-loader'
@@ -90,7 +98,7 @@ let rendererConfig = {
             extractCSS: process.env.NODE_ENV === 'production',
             loaders: {
               sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
-              scss: 'vue-style-loader!css-loader!sass-loader'
+              scss: 'vue-style-loader!css-loader!sass-loader',
             }
           }
         }
