@@ -7,6 +7,8 @@ const { dependencies } = require('../package.json')
 
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
 
+const npmPackage = require('../package.json')
+
 const env = process.env.NODE_ENV || 'development'
 
 let mainConfig = {
@@ -53,7 +55,8 @@ let mainConfig = {
   plugins: [
   ],
   resolve: {
-    extensions: ['.js', '.json', '.node']
+    extensions: ['.js', '.json', '.node'],
+    alias: npmPackage._moduleAliases || {},
   },
   target: 'electron-main'
 }

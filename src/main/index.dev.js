@@ -6,11 +6,16 @@
  */
 
 /* eslint-disable */
-
 // Set environment for development
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = 'development'
 }
+if (!process.env.BABEL_ENV) {
+  process.env.BABEL_ENV = 'main'
+}
+
+require("@babel/register")
+require("module-alias/register")
 
 // Install `electron-debug` with `devtron`
 require('electron-debug')({ showDevTools: true })
@@ -24,6 +29,7 @@ require('electron').app.on('ready', () => {
       console.log('Unable to install `vue-devtools`: \n', err)
     })
 })
+
 
 // Require `main` process to boot app
 require('./index')

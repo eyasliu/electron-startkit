@@ -17,6 +17,15 @@ let electronProcess = null
 let manualRestart = false
 let hotMiddleware
 
+const argv = process.argv
+let isMain = argv.some(i => ~['--main', '-main'].indexOf(i))
+let isRenderer = argv.some(i => ~['--renderer', '-renderer'].indexOf(i))
+
+if (!isMain && !isRenderer) {
+  isMain = true
+  isRenderer = true
+}
+
 const ports = appConfig.ports
 
 function logStats (proc, data) {
@@ -53,8 +62,8 @@ function startRenderer () {
 
     compiler.plugin('compilation', compilation => {
       compilation.plugin('htmlWebpackPluginAfterEmit', (data, cb) => {
-        hotMiddleware.publish({ action: 'reload' })
-        cb()
+        hotMiddleware && hotMiddleware.publish({ action: 'reload' })
+        // cb()
       })
     })
 
@@ -88,7 +97,7 @@ function startMain () {
 
     compiler.plugin('watch-run', (compilation, done) => {
       logStats('Main', chalk.white.bold('compiling...'))
-      hotMiddleware.publish({ action: 'compiling' })
+      hotMiddleware && hotMiddleware.publish({ action: 'compiling' })
       done()
     })
 
@@ -169,9 +178,12 @@ function greeting () {
 function init () {
   greeting()
 
-  Promise.all([startRenderer(), startMain()])
+  Promise.all([
+    !isRenderer || startRenderer(),
+    !isMain || startMain()
+  ])
     .then(() => {
-      startElectron()
+      isMain && startElectron()
     })
     .catch(err => {
       console.error(err)

@@ -5,12 +5,20 @@
   "description": "desktop app startkit",
   "license": null,
   "main": "./dist/electron/main.js",
+  "_moduleAliases": {
+    "@root": ".",
+    "@": "src/main/app",
+    "@app": "src/main/app",
+    "@main": "src/main"
+  },
   "scripts": {
     "build": "node scripts/build.js && electron-builder",
     "build:dir": "node scripts/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node scripts/build.js",
     "build:web": "cross-env BUILD_TARGET=web node scripts/build.js",
-    "dev": "node scripts/dev-runner.js",
+    "dev": "cross-env NODE_ENV=development node scripts/dev-runner.js",
+    "dev:main": "cross-env NODE_ENV=development electron src/main/index.dev.js",
+    "dev:renderer": "cross-env NODE_ENV=development node scripts/dev-runner.js --renderer",
     "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src",
     "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src",
     "pack": "npm run pack:main && npm run pack:renderer",
@@ -53,6 +61,7 @@
     }
   },
   "dependencies": {
+    "@babel/runtime": "^7.0.0",
     "axios": "^0.18.0",
     "less-loader": "^4.1.0",
     "mini-css-extract-plugin": "^0.4.2",
@@ -89,7 +98,7 @@
     "cfonts": "^2.1.3",
     "chalk": "^2.1.0",
     "copy-webpack-plugin": "^4.0.1",
-    "cross-env": "^5.0.5",
+    "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "del": "^3.0.0",
     "devtron": "^1.4.0",
@@ -109,6 +118,7 @@
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^2.0.0",
     "html-webpack-plugin": "^3.2.0",
+    "module-alias": "^2.1.0",
     "multispinner": "^0.2.1",
     "node-loader": "^0.6.0",
     "style-loader": "^0.23.0",
