@@ -14,7 +14,7 @@ if (!process.env.BABEL_ENV) {
   process.env.BABEL_ENV = 'main'
 }
 
-require("@babel/register")
+// require("@babel/register")
 require("module-alias/register")
 
 // Install `electron-debug` with `devtron`

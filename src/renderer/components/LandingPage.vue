@@ -31,7 +31,8 @@
 
 <script>
   import SystemInformation from './LandingPage/SystemInformation'
-
+  import ipc from '../service/ipc'
+  console.log(ipc)
   export default {
     name: 'landing-page',
     components: { SystemInformation },
@@ -39,6 +40,13 @@
       open (link) {
         this.$electron.shell.openExternal(link)
       }
+    },
+    mounted() {
+      setInterval(() => {
+        ipc.send({
+          cmd: 'healthcheck'
+        })
+      }, 5000)
     }
   }
 </script>

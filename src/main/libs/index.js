@@ -1,10 +1,12 @@
-/**
- * 框架入口，管理各项服务
- */
+const path = require('path')
+const APP = require('@main/libs/core')
 
- /**
-  * @param {object} options 配置项，完整配置：
-  */
-export default options => {
+const app = new APP({
+  basedir: path.join(__dirname, '../')
+})
 
-}
+app.$use(require('./parser'))
+app.$use(require('./router'))
+
+app.$initialize()
+app.$clear()
