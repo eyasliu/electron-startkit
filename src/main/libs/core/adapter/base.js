@@ -25,6 +25,10 @@ module.exports = class BaseAdapter {
     this.dataHandlers.push(fn)
   }
 
+  router() {
+    const router = new router()
+  }
+
   _getSeqno() {
     return Math.random().toString(36).substr(2)
   }

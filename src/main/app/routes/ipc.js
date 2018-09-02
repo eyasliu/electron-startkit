@@ -1,9 +1,8 @@
 module.exports = ({
-  router,
   adapter: { ipc },
   controller: { machine }
 }) => {
-  router.register(ipc, data => data.cmd, {
+  ipc.router({
     'healthcheck': machine.healthcheck
-  })
+  }, data => data.cmd)
 }

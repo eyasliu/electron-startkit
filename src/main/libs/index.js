@@ -1,12 +1,11 @@
 const path = require('path')
 const APP = require('@main/libs/core')
 
+const basedir = path.join(__dirname, '../')
+
 const app = new APP({
-  basedir: path.join(__dirname, '../')
+  basedir: basedir
 })
 
-app.$use(require('./parser'))
-app.$use(require('./router'))
-
-app.$initialize()
-app.$clear()
+app.$use(require('./loader'))
+app.$start()

@@ -24,8 +24,7 @@
     "lint:fix": "eslint --ext .js,.vue --fix src",
     "pack": "npm run pack:main && npm run pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config scripts/webpack.main.config.js",
-    "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config scripts/webpack.renderer.config.js",
-    "postinstall": "npm run lint:fix"
+    "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config scripts/webpack.renderer.config.js"
   },
   "build": {
     "productName": "desktop-app",
@@ -64,6 +63,7 @@
   "dependencies": {
     "@babel/runtime": "^7.0.0",
     "axios": "^0.18.0",
+    "import-modules": "^1.1.0",
     "less-loader": "^4.1.0",
     "mini-css-extract-plugin": "^0.4.2",
     "sass-loader": "^7.1.0",

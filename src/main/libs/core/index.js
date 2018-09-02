@@ -4,7 +4,8 @@
 
 const controller = require('./parser/controller')
 const store = require('./parser/store')
-const commonParser = require('./parser/commonParser')
+const preParse = require('./parser/pre')
+const commonParser = require('./parser/common')
 
 /**
   * @param {object} options 配置项，完整配置：
@@ -12,27 +13,41 @@ const commonParser = require('./parser/commonParser')
 module.exports = class Core {
   constructor(options) {
     this.basedir = options.basedir
-    this.$setProto('$parser', {
+    this.$setProto('_parser', {
       controller,
       store,
+      pre: preParse,
       common: commonParser,
-      service: commonParser
+      service: preParse
     })
+    this.Class = {}
+  }
+
+  $initClass() {
+    this.Class = {
+      Adapter: require('./adapter/base'),
+      ClientAdapter: require('./adapter/client'),
+      ServerAdapter: require('./adapter/server'),
+    }
   }
 
   $load(prop, entries) {
-    if (this[prop]) {
-      throw new Error('app.' + prop + 'has been occupied for others usage.')
+    if (typeof prop === 'string') {
+      if (this[prop]) {
+        throw new Error('app.' + prop + 'has been occupied for others usage.')
+      }
+      this[prop] = typeof entries === 'function' ? entries(this) : entries
+    } else if (typeof entries === 'function') {
+      entries(this)
     }
-    this[prop] = typeof entries === 'function' ? entries(this) : entries
   }
 
   $use(fn) {
     fn(this)
   }
 
-  $groupParse(parserName, entries) {
-    const parser = this.$parser[parserName](this)
+  $parser(parserName, entries) {
+    const parser = this._parser[parserName](this)
     const parsed = {}
     for (let [key, val] of Object.entries(entries)) {
       parsed[key] = parser(val, key)

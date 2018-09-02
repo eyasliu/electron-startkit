@@ -1,4 +1,4 @@
-module.exports = ({ service, controller }) => ({
+module.exports = app => app.Controller({
   mixin: require('./method'),
   data: {
     demo: true
