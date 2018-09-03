@@ -1,4 +1,4 @@
-module.exports = (app) => ({
+module.exports = ({ store: { user } }) => ({
   data: {
     demo: true
   },
@@ -17,8 +17,9 @@ module.exports = (app) => ({
     })
   },
   healthcheck(req, res) {
+    user.login({ id: 1234 })
     setTimeout(() => {
-      // res.notfound(null, 'haha', 303)
+      res.ok(user, 'haha', 303)
     }, 1000)
   },
 })

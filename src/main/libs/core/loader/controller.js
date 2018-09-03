@@ -2,14 +2,16 @@
  * 组织业务逻辑代码
  */
 
+const { Preloader } = require('./common')
+
 class BaseController {}
 
-class ControllerLoader {
+class ControllerLoader extends Preloader {
   constructor(fn, context) {
-    this.instence = new (class Controller extends BaseController {})()
+    super(new (class Controller extends BaseController {})())
+
     this.context = context
     this.handler = fn
-    this.setInit()
   }
   initialize() {
     delete this.instence.init
@@ -31,14 +33,6 @@ class ControllerLoader {
     if (this.instence.init) {
       this.instence.init(this.context)
     }
-  }
-
-  setInit() {
-    this.instence.init = this.initialize.bind(this)
-  }
-
-  setProto(key, val) {
-    Object.getPrototypeOf(this)[key] = val
   }
 }
 

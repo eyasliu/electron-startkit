@@ -2,12 +2,14 @@ const context = require('./context')
 const controller = require('./controller')
 const raw = require('./raw')
 const preload = require('./preload')
+const store = require('./store')
 
 const loaderMap = {
   context,
   controller,
   raw,
   preload,
+  store,
 }
 
 const addLoader = (name, loader) => {
