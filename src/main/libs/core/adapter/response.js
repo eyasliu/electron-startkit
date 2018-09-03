@@ -1,17 +1,27 @@
-
+const Emmiter = require('events')
 const defaultMsg = 'route is not found.'
 const defaultStatus = 404
 const defaultBody = {
-  error: new Error('route is not found')
+  error: 'Error: route is not found'
 }
 
-class Response {
-  constructor() {
-    this.isset = false
+const timeoutBody = {
+  error: 'Error: gateway timeout 504'
+}
 
-    this.msg = defaultMsg
+class Response extends Emmiter {
+  constructor(req) {
+    super()
+    this.request = req
+    this.cmd = req.cmd
+    this.seqno = req.seqno
+
     this.status = defaultStatus
     this.body = defaultBody
+    this.msg = defaultMsg
+    this.requestMaxTime = req.timeout
+
+    this.done = this._done.bind(this)
   }
 
   setDefaultOk() {
@@ -23,32 +33,50 @@ class Response {
       this.msg = 'ok'
     }
 
-    if (this.body == defaultBody) {
+    if (this.body === defaultBody) {
       this.body = {}
     }
   }
 
-  send(body) {
-    this.setDefaultOk()
-    this.body = body
+  _done() {
+    this.emit('send')
   }
 
-  response(mixin) {
-    for (let [key, val] of Object.entries(mixin)) {
-      Object.getPrototypeOf(this)[key] = val
-    }
+  _timeout() {
+    this.msg = 'timeout'
+    this.status = 504
+    this.body = timeoutBody
+    this.send()
   }
 
-  get data() {
+  awaitSend() {
+    return new Promise(resolve => {
+      const timer = setTimeout(() => {
+        this._timeout()
+      }, this.requestMaxTime)
+
+      this.on('send', () => {
+        resolve()
+        clearTimeout(timer)
+      })
+    })
+  }
+
+  toJSON() {
     return {
       msg: this.msg,
       status: this.status,
+      cmd: this.cmd,
+      seqno: this.seqno,
       body: this.body
     }
   }
+}
 
-  set body(val) {
-    this.setDefaultOk()
-    this.body = val
+Response.extends = (mixin) => {
+  for (let [key, val] of Object.entries(mixin)) {
+    Response.prototype[key] = val
   }
 }
+
+module.exports = Response

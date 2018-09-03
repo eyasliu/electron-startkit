@@ -2,8 +2,7 @@ module.exports = ({
   adapter: { ipc },
   controller: { machine }
 }) => {
-  console.log(machine)
-  ipc.router({
+  ipc.routes({
     'healthcheck': machine.healthcheck
-  }, data => data.cmd)
+  })
 }

@@ -21,15 +21,14 @@ module.exports = app => {
     }
   
     onMessage(isSync) {
-      return (event, arg, channel) => {
-        this.onData(arg)
-        this.routerHandler && this.routerHandler(arg).then(res => {
-          if (isSync) {
-            event.returnValue = res
-          } else {
-            event.sender.send(channel, res)
-          }
-        })
+      return async (event, arg, channel) => {
+        const res = await this.onData(arg)
+
+        if (isSync) {
+          event.returnValue = res
+        } else {
+          event.sender.send(channel, res)
+        }
       }
     }
   

@@ -1,34 +1,44 @@
 /**
  * 路由处理，主要处理 IPC，或者其他后端服务发送来的消息转发
  */
+
+const Request = require('./request')
+const Response = require('./response')
+
 class Router {
-  constructor() {
-    this.routes = new Map()
-    this.parsers = new Map()
-    this.register = this.registerRoute.bind(this)
-    // TODO: response
-    this.response = {
-      ok() {},
-      send() {},
-    }
+  constructor(option) {
+    this.routes = option.routes || {}
+    this.adapter = option.adapter
+    this.parser = option.parser || this.defaultParser
+
+    this.onData = this.onDataHandler.bind(this)
+  }
+  defaultParser(data) {
+    return data.cmd
   }
 
-  registerRoute(adapter, parser, routes) {
-    if (!adapter || !adapter.routerHandler) {
-      throw new Error('Invalid adapter, require routerHandler() method')
+  set(option) {
+    this.routes = option.routes || {}
+    this.parser = option.parser || this.defaultParser
+  }
+
+  async onDataHandler(data) {
+    const route = this.parser(data)
+    const handler = this.routes[route]
+
+    const request = new Request(data)
+    const response = new Response(request)
+
+    if (typeof handler === 'function') {
+      handler(request, response)
+      await response.awaitSend()
+    } else {
+      response.send(handler)
     }
 
-    const adapterID = adapter.adapterID
+    const responseData = response.toJSON()
 
-    // 记录路由
-    this.routes.set(adapterID, routes)
-    this.parsers.set(adapterID, parser)
-
-    adapter.registerRouterHandler(data => {
-      const res = this.receive(adapter, data)
-
-      return res
-    })
+    return responseData
   }
 
   /**
@@ -42,43 +52,6 @@ class Router {
 
     const res = this.onData(routeId, route, body)
     return res
-  }
-
-  /**
-   * 触发路由
-   * @param {number} id Adapter id
-   * @param {string} route 路由名称
-   * @param {any} data 路由请求的数据
-   */
-  onData(id, route, data) {
-    // if (!this.isReady) {
-    //   this.beforeReadyCache.push({
-    //     id, route, data
-    //   })
-    //   return
-    // } else if (this.beforeReadyCache.length) {
-
-    //   const cache = this.beforeReadyCache
-    //   this.beforeReadyCache = []
-    //   cache.forEach(config => {
-    //     this.onData(config.id, config.route, config.data)
-    //   })
-    //   // for (let config of this.beforeReadyCache) {
-    //   // }
-    //   // this.beforeReadyCache.clear()
-    // }
-    const routes = this.routes.get(id)
-    if (routes.hasOwnProperty(route)) {
-      const handler = routes[route]
-      if (typeof handler === 'function') {
-        return handler(data, this.response)
-      } else {
-        return handler
-        // throw new Error(`route ${route} handler is invalid!`)
-      }
-    } else {
-      return null
-    }
   }
 }
 

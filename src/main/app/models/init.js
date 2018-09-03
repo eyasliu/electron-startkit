@@ -1,1 +1,3 @@
-console.log('init sqlite')
+module.exports = app => {
+  console.log('init sqlite')
+}

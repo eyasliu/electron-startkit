@@ -2,7 +2,7 @@ const init = require('./init')
 
 module.exports = app => {
   console.log(app)
-  // init()
+  init()
 
   return {
     machine: require('./machine')

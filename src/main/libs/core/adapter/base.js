@@ -1,3 +1,4 @@
+const Router = require('./router')
 
 let adapterID = 1
 
@@ -7,14 +8,17 @@ module.exports = class BaseAdapter {
     this.name = ''
 
     this.dataHandlers = []
-    this.routerHandler = f => f
+
+    this.router = new Router({
+      adapter: this
+    })
+
+    this.routerHandler = this.router.onData
   }
 
   onData(data) {
     this.dataHandlers.forEach(f => f(data))
-  }
-  registerRouterHandler(f) {
-    this.routerHandler = f
+    return this.routerHandler(data)
   }
 
   addDataHandler(fn) {
@@ -25,8 +29,11 @@ module.exports = class BaseAdapter {
     this.dataHandlers.push(fn)
   }
 
-  router() {
-    const router = new router()
+  routes(routes, parser) {
+    this.router.set({
+      routes,
+      parser,
+    })
   }
 
   _getSeqno() {

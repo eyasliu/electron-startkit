@@ -6,7 +6,6 @@ module.exports = (app) => ({
     console.log(app, this)
   },
   async reboot (req, res) {
-    // App
     const data = req.data
 
     const done = data
@@ -18,8 +17,8 @@ module.exports = (app) => ({
     })
   },
   healthcheck(req, res) {
-    res.send({
-      test: 'anythink is ok'
-    })
+    setTimeout(() => {
+      // res.notfound(null, 'haha', 303)
+    }, 1000)
   },
 })

@@ -8,6 +8,7 @@ class Application extends Emmiter {
 
     this._class()
     this._loader = loader(this)
+    this._loaderModules = []
   }
 
   /**
@@ -18,6 +19,8 @@ class Application extends Emmiter {
       Adapter: require('./adapter/base'),
       ClientAdapter: require('./adapter/client'),
       ServerAdapter: require('./adapter/server'),
+      Request: require('./adapter/request'),
+      Response: require('./adapter/response'),
     }
   }
 
@@ -54,21 +57,15 @@ class Application extends Emmiter {
   /**
    * auto run loader init method
    */
-  async _autoInit(obj) {
+  async _autoInit() {
     this.emit('beforeInit', this)
-    if (!obj) {
-      return
-    }
-    for (let [key, val] of Object.entries(obj)) {
-      if (val && key.indexOf('$') !== 0) {
-        if ((val.init) && typeof val.init === 'function') {
-          await val.init(this)
-        }
-        if (typeof val === 'object') {
-          this._autoInit(val)
-        }
+
+    this._loaderModules.forEach(entity => {
+      if (entity && (entity.init) && typeof entity.init === 'function') {
+        entity.init(this)
       }
-    }
+    })
+
     this.emit('afterInit', this)
   }
 

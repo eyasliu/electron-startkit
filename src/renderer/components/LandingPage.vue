@@ -45,6 +45,10 @@
       setInterval(() => {
         ipc.send({
           cmd: 'healthcheck'
+        }).then(res => {
+          console.log(res)
+        }).catch(res => {
+          console.log('error: ', res)
         })
       }, 5000)
     }

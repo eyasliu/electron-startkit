@@ -34,13 +34,16 @@ module.exports = app => type => (collect, name) => {
     throw new Error('loader collect invalid')
   } else if (typeof collect === 'function') {
     result = loader(collect)
+    app._loaderModules.push(result)
   } else if (typeof collect === 'object') {
     result = {}
     for (let [key, val] of Object.entries(collect)) {
       result[key] = loader(val)
+      app._loaderModules.push(result[key])
     }
   } else {
     result = collect
+    app._loaderModules.push(result)
   }
 
   if (name) {

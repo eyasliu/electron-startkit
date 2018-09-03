@@ -1,7 +1,7 @@
 
 module.exports = app => {
-  app.$log({
-    basedir: path.resolve('log'),
-    level: 'verbose'
-  })
+  // app.$log({
+  //   basedir: path.resolve('log'),
+  //   level: 'verbose'
+  // })
 }

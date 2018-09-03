@@ -7,6 +7,8 @@ const app = new APP({
   basedir: basedir
 })
 
+app.Class.Response.extends(require('./response'))
+
 app.$use(require('./loader'))
 app.$start()
 

@@ -13,7 +13,7 @@ class IPC {
   }
 
   listenerFuncs = {} // ipc 有数据返回时触发的函数, { channel: [fncs] }
-  asyncRequestTimeout = 5000 // 异步请求超时时间
+  asyncRequestTimeout = 60000 // 异步请求超时时间
   
   sendModlistener = {} // 使用 send() 监听的对象, { cmd: func }
   onModListener = {} // 使用 on() 监听的对象, { cmd: func }
@@ -170,8 +170,12 @@ class IPC {
       // if (this.sendModlistener[reqid]) {
       // 成功的回调
       let resolveHander = (res) => {
-        resolve(res)
         clearTimeout(timeout)
+        if (res.status >= 400) {
+          reject(res)
+        } else {
+          resolve(res)
+        }
       }
 
       // 超时失败
