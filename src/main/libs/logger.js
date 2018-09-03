@@ -1,3 +1,4 @@
+const { app: electronApp } = require('electron')
 const path = require('path')
 const winston = require('winston')
 const { format } = winston
@@ -5,7 +6,7 @@ const { combine, timestamp, label, printf } = format;
 
 module.exports = app => {
   // TODO: logpath
-  const logPath = path.resolve('logs')
+  const logPath = path.join(electronApp.getPath('logs'))
   
   const fileFormate = combine(
     format.timestamp({

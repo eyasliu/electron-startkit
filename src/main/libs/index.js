@@ -12,6 +12,9 @@ const application = new APP({
 // load logger
 application.$use(require('./logger'))
 
+// load window manager
+application.$use(require('./window'))
+
 // load controller, routes, adapter......
 application.$use(require('./loader'))
 

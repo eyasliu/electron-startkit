@@ -18,7 +18,7 @@ if (!process.env.BABEL_ENV) {
 require("module-alias/register")
 
 // Install `electron-debug` with `devtron`
-require('electron-debug')({ showDevTools: true })
+require('electron-debug')({ showDevTools: false, devToolsMode: 'bottom' })
 
 // Install `vue-devtools`
 require('electron').app.on('ready', () => {

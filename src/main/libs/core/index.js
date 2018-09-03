@@ -21,6 +21,7 @@ class Application extends Emmiter {
       ServerAdapter: require('./adapter/server'),
       Request: require('./adapter/request'),
       Response: require('./adapter/response'),
+      Window: require('./window'),
     }
   }
 
