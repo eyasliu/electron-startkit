@@ -1,15 +1,24 @@
+require('./chromeArgs')
 const path = require('path')
 const APP = require('@main/libs/core')
 
-const basedir = path.join(__dirname, '../')
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true
 
-const app = new APP({
+const basedir = path.join(__dirname, '../')
+const application = new APP({
   basedir: basedir
 })
 
-app.Class.Response.extends(require('./response'))
+// load logger
+application.$use(require('./logger'))
 
-app.$use(require('./loader'))
-app.$start()
+// load controller, routes, adapter......
+application.$use(require('./loader'))
 
-module.exports = app
+// load adaper
+application.$use(require('./adapter'))
+
+// run, electron, run!!!
+application.$start()
+
+module.exports = application

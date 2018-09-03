@@ -3,7 +3,7 @@ module.exports = ({ store: { user } }) => ({
     demo: true
   },
   init(app) {
-    console.log(app, this)
+    // console.log(app, this)
   },
   async reboot (req, res) {
     const data = req.data
@@ -18,8 +18,6 @@ module.exports = ({ store: { user } }) => ({
   },
   healthcheck(req, res) {
     user.login({ id: 1234 })
-    setTimeout(() => {
-      res.ok(user, 'haha', 303)
-    }, 1000)
+    res.ok(user, 'haha', 303)
   },
 })

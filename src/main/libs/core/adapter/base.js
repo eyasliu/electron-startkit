@@ -7,7 +7,8 @@ module.exports = class BaseAdapter {
     this.adapterID = adapterID++
     this.name = ''
 
-    this.dataHandlers = []
+    this.requestMiddleware = []
+    this.responseMiddleware = []
 
     this.router = new Router({
       adapter: this
@@ -16,17 +17,34 @@ module.exports = class BaseAdapter {
     this.routerHandler = this.router.onData
   }
 
-  onData(data) {
-    this.dataHandlers.forEach(f => f(data))
-    return this.routerHandler(data)
+  async onData(data) {
+    const requestRawData = data
+    // reduce request middleware
+    const requestData = this.requestMiddleware.reduce((prev, next) => {
+      return next(prev) || prev
+    }, requestRawData)
+    const responseRawData = await this.routerHandler(requestData)
+
+    // reduce response middleware
+    const responseData = this.responseMiddleware.reduce((prev, next) => {
+      return next(prev) || prev
+    }, responseRawData)
+
+    return responseData
   }
 
-  addDataHandler(fn) {
-    if (!fn || typeof fn !== 'function') {
-      throw new Error('dataHandler should be function')
+  useRequest(fn) {
+    if (typeof fn !== 'function') {
+      throw new Error('adapter middleware should be function.')
     }
+    this.requestMiddleware.push(fn.bind(this))
+  }
 
-    this.dataHandlers.push(fn)
+  useResponse(fn) {
+    if (typeof fn !== 'function') {
+      throw new Error('adapter middleware should be function.')
+    }
+    this.responseMiddleware.push(fn.bind(this))
   }
 
   routes(routes, parser) {

@@ -45,14 +45,14 @@ class Router {
    * 解析收到的请求
    * @param {object} body 请求数据
    */
-  receive(adapter, body) {
-    const routeId = adapter.adapterID
-    const parser = this.parsers.get(routeId)
-    const route = parser(body)
+  // receive(adapter, body) {
+  //   const routeId = adapter.adapterID
+  //   const parser = this.parsers.get(routeId)
+  //   const route = parser(body)
 
-    const res = this.onData(routeId, route, body)
-    return res
-  }
+  //   const res = this.onData(routeId, route, body)
+  //   return res
+  // }
 }
 
 module.exports = Router

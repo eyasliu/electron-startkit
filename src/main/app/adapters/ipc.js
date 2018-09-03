@@ -1,10 +1,11 @@
 const { ipcMain } = require('electron')
 
-module.exports = app => {
-  class IPC extends app.Class.Adapter {
+module.exports = ({ Class, log }) => {
+  class IPC extends Class.Adapter {
     constructor(options) {
       super()
       this.instence = ipcMain
+      this.name = 'IPC'
   
       this.syncChannel = options.syncChannel || []
       this.asyncChannel = options.asyncChannel || []

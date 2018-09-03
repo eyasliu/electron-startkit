@@ -20,6 +20,7 @@ class Response extends Emmiter {
     this.body = defaultBody
     this.msg = defaultMsg
     this.requestMaxTime = req.timeout
+    this.isResolve = false
 
     this.done = this._done.bind(this)
   }
@@ -40,6 +41,7 @@ class Response extends Emmiter {
 
   _done() {
     this.emit('send')
+    this.isResolve = true
   }
 
   _timeout() {
@@ -50,6 +52,10 @@ class Response extends Emmiter {
   }
 
   awaitSend() {
+    if (this.isResolve) {
+      return Promise.resolve()
+    }
+
     return new Promise(resolve => {
       const timer = setTimeout(() => {
         this._timeout()
@@ -57,6 +63,7 @@ class Response extends Emmiter {
 
       this.on('send', () => {
         resolve()
+        this.isResolve = true
         clearTimeout(timer)
       })
     })
