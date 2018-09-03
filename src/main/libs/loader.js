@@ -1,13 +1,13 @@
 module.exports = app => {
   const controller = app.$loader('controller')
-  const raw = app.$loader('raw')
   const context = app.$loader('context')
+  const preload = app.$loader('preload')
 
-  controller(require('@/controllers'), 'controller')
-
-  raw(require('@/adapters'), 'adapter')
-
-  context(require('@/models'), 'model')
-  context(require('@/routes'))
+  context(require('@/adapters'), 'adapter')
   context(require('@/services'), 'service')
+  
+  controller(require('@/controllers'), 'controller')
+  
+  preload(require('@/models'), 'model')
+  preload(require('@/routes'))
 }

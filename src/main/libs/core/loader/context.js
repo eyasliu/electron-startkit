@@ -1,3 +1,7 @@
+
 module.exports = app => entity => {
-  return entity(app)
+  if (typeof entity === 'function') {
+    return entity(app)
+  }
+  return entity
 }

@@ -1,7 +1,7 @@
 const { ipcMain } = require('electron')
 
-module.exports = ({ CLASS }) => {
-  class IPC extends CLASS.Adapter {
+module.exports = app => {
+  class IPC extends app.Class.Adapter {
     constructor(options) {
       super()
       this.instence = ipcMain

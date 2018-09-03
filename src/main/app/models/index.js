@@ -1,8 +1,10 @@
 const init = require('./init')
 
-module.exports = app => ({
-  init,
-  models: {
-    account: 
+module.exports = app => {
+  console.log(app)
+  // init()
+
+  return {
+    machine: require('./machine')
   }
-})
+}

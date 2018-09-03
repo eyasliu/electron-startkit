@@ -1,29 +1,19 @@
-/**
- * 框架入口，管理各项服务
- */
+const Emmiter = require('events')
+const loader = require('./loader')
 
-const controller = require('./parser/controller')
-const store = require('./parser/store')
-const preParse = require('./parser/pre')
-const commonParser = require('./parser/common')
+class Application extends Emmiter {
+  constructor() {
+    super()
+    this.emit('load', this)
 
-/**
-  * @param {object} options 配置项，完整配置：
-  */
-module.exports = class Core {
-  constructor(options) {
-    this.basedir = options.basedir
-    this.$setProto('_parser', {
-      controller,
-      store,
-      pre: preParse,
-      common: commonParser,
-      service: preParse
-    })
-    this.Class = {}
+    this._class()
+    this._loader = loader(this)
   }
 
-  $initClass() {
+  /**
+   * Class
+   */
+  _class() {
     this.Class = {
       Adapter: require('./adapter/base'),
       ClientAdapter: require('./adapter/client'),
@@ -31,52 +21,66 @@ module.exports = class Core {
     }
   }
 
-  $load(prop, entries) {
-    if (typeof prop === 'string') {
-      if (this[prop]) {
-        throw new Error('app.' + prop + 'has been occupied for others usage.')
-      }
-      this[prop] = typeof entries === 'function' ? entries(this) : entries
-    } else if (typeof entries === 'function') {
-      entries(this)
-    }
-  }
-
-  $use(fn) {
-    fn(this)
-  }
-
-  $parser(parserName, entries) {
-    const parser = this._parser[parserName](this)
-    const parsed = {}
-    for (let [key, val] of Object.entries(entries)) {
-      parsed[key] = parser(val, key)
+  /**
+   * use app middleware
+   * 
+   * @param {Function} middleware fn(app)
+   * 
+   * @return {Application}
+   */
+  $use(middleware) {
+    if (typeof middleware !== 'function') {
+      throw new Error('application middleware should be function.')
     }
 
-    return parsed
+    middleware(this)
+    return this
   }
 
-  $initialize(obj = this) {
+  $loader(type) {
+    return this._loader(type)
+  }
+  $addLoader(...args) {
+    return loader.addLoader.apply(undefined, args)
+  }
+
+  $set(key, val) {
+    if (this[key]) {
+      throw new Error('conflict app.' + key + ' is already defined.')
+    }
+    this[key] = val
+  }
+
+  /**
+   * auto run loader init method
+   */
+  async _autoInit(obj) {
+    this.emit('beforeInit', this)
     if (!obj) {
-      obj = this
+      return
     }
     for (let [key, val] of Object.entries(obj)) {
       if (val && key.indexOf('$') !== 0) {
         if ((val.init) && typeof val.init === 'function') {
-          val.init(this)
+          await val.init(this)
         }
         if (typeof val === 'object') {
-          this.$initialize(val)
+          this._autoInit(val)
         }
       }
     }
+    this.emit('afterInit', this)
   }
 
-  $setProto(key, val) {
-    Object.getPrototypeOf(this)[key] = val
-  }
-
-  $clear() {
-    
+  /**
+   * start run application
+   * 
+   * 1. run init method
+   * 2. run auth method for adapter
+   */
+  $start() {
+    this._autoInit(this)
   }
 }
+
+module.exports = Application

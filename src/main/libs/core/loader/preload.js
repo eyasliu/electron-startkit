@@ -1,4 +1,3 @@
-
 module.exports = context => (fn, name) => {
   const placeholder = {
     init() {
@@ -9,15 +8,15 @@ module.exports = context => (fn, name) => {
       }
       for (let [key, val] of Object.entries(config)) {
         if (key === 'data') {
-          this.instence[key] = val || {}
+          this[key] = val || {}
         } else if (typeof val === 'function') {
-          this.instence[key] = val.bind(this.instence)
+          this[key] = val.bind(this)
         } else {
-          this.instence[key] = val
+          this[key] = val
         }
       }
-      if (this.instence.init) {
-        this.instence.init(this.$context)
+      if (this.init) {
+        this.init(this.$context)
       }
     }
   }

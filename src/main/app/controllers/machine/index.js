@@ -1,12 +1,12 @@
-module.exports = app => app.Controller({
-  mixin: require('./method'),
+module.exports = (app) => ({
   data: {
     demo: true
   },
   init(app) {
-    console.log(service, controller, app, this)
+    console.log(app, this)
   },
   async reboot (req, res) {
+    // App
     const data = req.data
 
     const done = data
@@ -21,5 +21,5 @@ module.exports = app => app.Controller({
     res.send({
       test: 'anythink is ok'
     })
-  }
+  },
 })

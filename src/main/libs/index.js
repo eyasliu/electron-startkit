@@ -9,3 +9,5 @@ const app = new APP({
 
 app.$use(require('./loader'))
 app.$start()
+
+module.exports = app

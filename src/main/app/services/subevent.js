@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron')
 
-module.exports = context => {
+module.exports = function() {
   let mainWindow = null
 
   let winURL = `file://${__dirname}/index.html`

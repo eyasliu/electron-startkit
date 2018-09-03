@@ -1,11 +1,13 @@
 const context = require('./context')
 const controller = require('./controller')
 const raw = require('./raw')
+const preload = require('./preload')
 
 const loaderMap = {
   context,
   controller,
   raw,
+  preload,
 }
 
 const addLoader = (name, loader) => {
@@ -30,18 +32,20 @@ module.exports = app => type => (collect, name) => {
   let result = null
   if (!collect) {
     throw new Error('loader collect invalid')
-  } else if(typeof collect === 'function') {
+  } else if (typeof collect === 'function') {
     result = loader(collect)
-  } else if(typeof collect === 'object') {
+  } else if (typeof collect === 'object') {
     result = {}
-    for(let [key, val] of Object.entries(collect)) {
+    for (let [key, val] of Object.entries(collect)) {
       result[key] = loader(val)
     }
   } else {
     result = collect
   }
 
-  app.$set(name, result) 
+  if (name) {
+    app.$set(name, result) 
+  }
 }
 
 module.exports.addLoader = addLoader

@@ -1,4 +1,6 @@
 
-module.exports = app => {
-  
+class Window {
+
 }
+
+module.exports = new Window()
