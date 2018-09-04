@@ -15,7 +15,9 @@ if (!process.env.BABEL_ENV) {
 }
 
 // require("@babel/register")
-require("module-alias/register")
+if (process.env.COMPILER_ENV !== 'webpack') {
+  require('module-alias/register')
+}
 
 // Install `electron-debug` with `devtron`
 require('electron-debug')({ showDevTools: false, devToolsMode: 'bottom' })
