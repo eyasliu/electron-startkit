@@ -2,13 +2,14 @@
  * 组织业务逻辑代码
  */
 
-const { Preloader } = require('./common')
+const { Preloader } = require('./util')
 
 class BaseController {}
 
 class ControllerLoader extends Preloader {
   constructor(fn, context) {
-    super(new (class Controller extends BaseController {})())
+    const instence = new (class Controller extends BaseController {})()
+    super(instence)
 
     this.context = context
     this.handler = fn

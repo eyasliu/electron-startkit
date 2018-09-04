@@ -1,12 +1,9 @@
-const { app, BrowserWindow, dialog } = require('electron')
+const { app } = require('electron')
 
-module.exports = function({window}) {
-
+module.exports = function({ window }) {
   let winURL = `file://${__dirname}/index.html`
 
   function createWindow () {
-    
-
     if (process.env.NODE_ENV === 'development') {
       const rootConfig = require('@root/scripts/config')
       winURL = `http://localhost:${rootConfig.ports.renderer}`
@@ -15,7 +12,7 @@ module.exports = function({window}) {
     window.create({
       width: 1024,
       height: 768,
-      frame: false,
+      // frame: false,
       url: winURL,
       devtool: true
     })

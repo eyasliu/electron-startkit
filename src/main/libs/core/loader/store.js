@@ -2,7 +2,7 @@
  * 全局状态数据
  */
 
-const { Preloader } = require('./common')
+const { Preloader } = require('./util')
 
 class BaseStore {}
 

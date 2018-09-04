@@ -5,11 +5,11 @@ process.env.NODE_ENV = 'production'
 const { say } = require('cfonts')
 const chalk = require('chalk')
 const del = require('del')
-const { spawn } = require('child_process')
+const packager = require('electron-packager')
 const webpack = require('webpack')
 const Multispinner = require('multispinner')
 
-
+const buildConfig = require('./build.config')
 const mainConfig = require('./webpack.main.config')
 const rendererConfig = require('./webpack.renderer.config')
 const webConfig = require('./webpack.web.config')
@@ -18,6 +18,15 @@ const doneLog = chalk.bgGreen.white(' DONE ') + ' '
 const errorLog = chalk.bgRed.white(' ERROR ') + ' '
 const okayLog = chalk.bgBlue.white(' OKAY ') + ' '
 const isCI = process.env.CI || false
+
+const argv = process.argv
+let isMain = argv.some(i => ~['--main', '-main'].indexOf(i))
+let isRenderer = argv.some(i => ~['--renderer', '-renderer'].indexOf(i))
+
+if (!isMain && !isRenderer) {
+  isMain = true
+  isRenderer = true
+}
 
 if (process.env.BUILD_TARGET === 'clean') clean()
 else if (process.env.BUILD_TARGET === 'web') web()
@@ -34,7 +43,7 @@ function build () {
 
   del.sync(['dist/electron/*', '!.gitkeep'])
 
-  const tasks = ['main', 'renderer']
+  const tasks = [isMain && 'main', isRenderer && 'renderer'].filter(i => i)
   const m = new Multispinner(tasks, {
     preText: 'building',
     postText: 'process'
@@ -45,12 +54,18 @@ function build () {
   m.on('success', () => {
     process.stdout.write('\x1B[2J\x1B[0f')
     console.log(`\n\n${results}`)
-    console.log(`${okayLog}take it away ${chalk.yellow('`electron-builder`')}\n`)
-    process.exit()
+    // process.exit()
+    if (isMain && isRenderer) {
+      console.log(`${okayLog}take it away ${chalk.yellow('`electron-packager`')}\n`)
+      bundleApp()
+    }
   })
 
-  pack(mainConfig).then(result => {
-    results += result + '\n\n'
+  isMain && pack(mainConfig).then(result => {
+    results += result.toString({
+      colors: true,
+      chunks: false
+    }) + '\n\n'
     m.success('main')
   }).catch(err => {
     m.error('main')
@@ -59,8 +74,11 @@ function build () {
     process.exit(1)
   })
 
-  pack(rendererConfig).then(result => {
-    results += result + '\n\n'
+  isRenderer && pack(rendererConfig).then(result => {
+    results += result.toString({
+      colors: true,
+      chunks: false
+    }) + '\n\n'
     m.success('renderer')
   }).catch(err => {
     m.error('renderer')
@@ -81,10 +99,10 @@ function pack (config) {
           chunks: false,
           colors: true
         })
-        .split(/\r?\n/)
-        .forEach(line => {
-          err += `    ${line}\n`
-        })
+          .split(/\r?\n/)
+          .forEach(line => {
+            err += `    ${line}\n`
+          })
 
         reject(err)
       } else {
@@ -127,4 +145,14 @@ function greeting () {
     })
   } else console.log(chalk.yellow.bold('\n  lets-build'))
   console.log()
+}
+
+function bundleApp () {
+  packager(buildConfig)
+    .then(appPaths => {
+      console.log(`\n${doneLog}\n`)
+    }).catch(err => {
+      console.log(`\n${errorLog}${chalk.yellow('`electron-packager`')} says...\n`)
+      console.log(err + '\n')
+    })
 }

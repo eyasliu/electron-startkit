@@ -1,18 +1,17 @@
 'use strict'
 
 process.env.BABEL_ENV = 'main'
+process.env.COMPILER_ENV = 'webpack'
 
+const webpack = require('webpack')
 const path = require('path')
 const { dependencies } = require('../package.json')
 
-const BabiliWebpackPlugin = require('babili-webpack-plugin')
+// const BabiliWebpackPlugin = require('babili-webpack-plugin')
 
 const npmPackage = require('../package.json')
 
 const env = process.env.NODE_ENV || 'development'
-
-process.env.COMPILER_ENV = 'webpack'
-console.log('npmPackage', npmPackage._moduleAliases)
 
 const alias = {}
 
@@ -62,6 +61,9 @@ let mainConfig = {
     path: path.join(__dirname, '../dist/electron')
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.COMPILER_ENV': '"webpack"'
+    }),
   ],
   resolve: {
     extensions: ['.js', '.json', '.node'],
@@ -81,9 +83,9 @@ if (process.env.NODE_ENV !== 'production') {
  * Adjust mainConfig for production settings
  */
 if (process.env.NODE_ENV === 'production') {
-  mainConfig.plugins.push(
-    new BabiliWebpackPlugin()
-  )
+  // mainConfig.plugins.push(
+  //   // new BabiliWebpackPlugin()
+  // )
 }
 
 module.exports = mainConfig

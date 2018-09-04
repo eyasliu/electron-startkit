@@ -54,5 +54,4 @@ module.exports = app => {
    */
   //  adapter.ipc.useRequest(data => {})
   //  adapter.ipc.useResponse(data => {})
-
 }

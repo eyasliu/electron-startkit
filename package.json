@@ -14,10 +14,15 @@
     "@config": "src/main/config"
   },
   "scripts": {
-    "build": "node scripts/build.js && electron-builder",
-    "build:dir": "node scripts/build.js && electron-builder --dir",
+    "build": "node scripts/build.js",
+    "webpack:main": "node scripts/build.js --main",
+    "build:dir": "node scripts/build.js",
     "build:clean": "cross-env BUILD_TARGET=clean node scripts/build.js",
-    "build:web": "cross-env BUILD_TARGET=web node scripts/build.js",
+    "build:darwin": "cross-env BUILD_TARGET=darwin node scripts/build.js",
+    "build:linux": "cross-env BUILD_TARGET=linux node scripts/build.js",
+    "build:mas": "cross-env BUILD_TARGET=mas node scripts/build.js",
+    "build:win": "cross-env BUILD_TARGET=win32 node scripts/build.js",
+    "build:winx32": "cross-env BUILD_TARGET=win32 ARCH_TARGET=ia32 node scripts/build.js",
     "dev": "cross-env NODE_ENV=development node scripts/dev-runner.js",
     "dev:main": "cross-env NODE_ENV=development electron src/main/index.dev.js",
     "dev:renderer": "cross-env NODE_ENV=development node scripts/dev-runner.js --renderer",
@@ -62,8 +67,13 @@
     }
   },
   "dependencies": {
+    "regenerator-runtime": "^0.12.1",
+    "winston": "^3.0.0"
+  },
+  "devDependencies": {
     "@babel/runtime": "^7.0.0",
     "axios": "^0.18.0",
+    "electron-packager": "^12.1.1",
     "import-modules": "^1.1.0",
     "less-loader": "^4.1.0",
     "mini-css-extract-plugin": "^0.4.2",
@@ -73,9 +83,6 @@
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
-    "winston": "^3.0.0"
-  },
-  "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
     "@babel/plugin-proposal-decorators": "^7.0.0",
@@ -107,7 +114,6 @@
     "del": "^3.0.0",
     "devtron": "^1.4.0",
     "electron": "^2.0.8",
-    "electron-builder": "^20.28.3",
     "electron-debug": "^2.0.0",
     "electron-devtools-installer": "^2.2.0",
     "eslint": "^5.4.0",

@@ -1,3 +1,4 @@
+require('./polyfill')
 require('./chromeArgs')
 const path = require('path')
 const APP = require('@main/libs/core')

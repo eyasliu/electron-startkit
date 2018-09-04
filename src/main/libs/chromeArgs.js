@@ -7,6 +7,7 @@ const args = {
   'gpu-rasterization-msaa-sample-count': 16,
   'enable-zero-copy': true
 }
+
 for (let [key, val] of Object.entries(args)) {
   app.commandLine.appendSwitch(key, val)
 }

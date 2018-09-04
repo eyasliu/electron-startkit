@@ -7,12 +7,13 @@
           "@babel/preset-env",
           {
             "targets": {
-              "node": 8
+              "node": 6
             }
           }
         ]
       ],
       "plugins": [
+        "@babel/plugin-transform-runtime",
         "@babel/plugin-syntax-dynamic-import",
         "@babel/plugin-syntax-import-meta",
         "@babel/plugin-proposal-class-properties",
@@ -51,6 +52,7 @@
         ]
       ],
       "plugins": [
+        "@babel/plugin-transform-runtime",
         "@babel/plugin-syntax-dynamic-import",
         "@babel/plugin-syntax-import-meta",
         "@babel/plugin-proposal-class-properties",
@@ -89,6 +91,7 @@
         ]
       ],
       "plugins": [
+        "@babel/plugin-transform-runtime",
         "@babel/plugin-syntax-dynamic-import",
         "@babel/plugin-syntax-import-meta",
         "@babel/plugin-proposal-class-properties",
@@ -117,8 +120,5 @@
         "@babel/plugin-proposal-function-bind"
       ]
     }
-  },
-  "plugins": [
-    "@babel/plugin-transform-runtime"
-  ]
+  }
 }

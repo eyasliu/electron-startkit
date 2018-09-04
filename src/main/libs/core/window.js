@@ -6,7 +6,7 @@ const windowCurrentSetting = {
   height: 768,
   width: 1024,
   frame: true,
-  useContentSize: true,
+  // useContentSize: true,
 }
 module.exports = class Window {
   constructor() {
@@ -14,7 +14,7 @@ module.exports = class Window {
     this.instences = []
   }
 
-  get current() {
+  get main() {
     return this._currentWindow
   }
 
@@ -27,16 +27,20 @@ module.exports = class Window {
     this.instences.push(this._currentWindow)
 
     if (config.url) {
-      this._currentWindow.loadURL(config.url)
+      this.loadURL(config.url)
     }
 
     if (process.env.NODE_ENV === 'development') {
-      if(config.devtool) {
+      if (config.devtool) {
         require('electron-debug').openDevTools(this._currentWindow)
       }
     }
 
     return this._currentWindow
+  }
+
+  loadURL(...args) {
+    return this.main.loadURL(...args)
   }
 
   destroy() {}
