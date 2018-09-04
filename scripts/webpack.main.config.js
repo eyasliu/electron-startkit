@@ -11,6 +11,15 @@ const npmPackage = require('../package.json')
 
 const env = process.env.NODE_ENV || 'development'
 
+process.env.COMPILER_ENV = 'webpack'
+console.log('npmPackage', npmPackage._moduleAliases)
+
+const alias = {}
+
+for (let [key, val] of Object.entries(npmPackage._moduleAliases)) {
+  alias[key] = path.join(__dirname, '..', val)
+}
+
 let mainConfig = {
   entry: {
     main: path.join(__dirname, '../src/main/index.js')
@@ -32,11 +41,11 @@ let mainConfig = {
       //     }
       //   }
       // },
-      {
-        test: /\.js$/,
-        use: 'babel-loader',
-        exclude: /node_modules/
-      },
+      // {
+      //   test: /\.js$/,
+      //   use: 'babel-loader',
+      //   exclude: /node_modules/
+      // },
       {
         test: /\.node$/,
         use: 'node-loader'
@@ -56,7 +65,7 @@ let mainConfig = {
   ],
   resolve: {
     extensions: ['.js', '.json', '.node'],
-    alias: npmPackage._moduleAliases || {},
+    alias: alias || {},
   },
   target: 'electron-main'
 }
