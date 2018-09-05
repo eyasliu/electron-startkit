@@ -14,65 +14,29 @@
     "@config": "src/main/config"
   },
   "scripts": {
-    "build": "node scripts/build.js --nobuild && electron-builder",
+    "build": "npm run build:win",
     "webpack:main": "node scripts/build.js --main",
-    "build:dir": "node scripts/build.js --nobuild && electron-builder --dir",
+    "build:dir": "node scripts/build.js && electron-builder build --config scripts/builder.json --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node scripts/build.js",
-    "build:darwin": "cross-env BUILD_TARGET=darwin node scripts/build.js",
-    "build:linux": "cross-env BUILD_TARGET=linux node scripts/build.js",
-    "build:mas": "cross-env BUILD_TARGET=mas node scripts/build.js",
-    "build:win": "cross-env BUILD_TARGET=win32 node scripts/build.js",
-    "build:winx32": "cross-env BUILD_TARGET=win32 ARCH_TARGET=ia32 node scripts/build.js",
-    "build:win-installer": "npm run win && node scripts/build-installer.js",
-    "build:winx32-installer": "npm run winx32 && node scripts/build-installer.js --32",
+    "build:arm64": "node scripts/build.js && electron-builder build --config scripts/builder.json --arm64",
+    "build:linux": "node scripts/build.js && electron-builder build --config scripts/builder.json --linux --x64",
+    "build:linux32": "node scripts/build.js && electron-builder build --config scripts/builder.json --linux --ia32",
+    "build:mac": "node scripts/build.js && electron-builder build --config scripts/builder.json --mac --x64",
+    "build:win": "node scripts/build.js && electron-builder build --config scripts/builder.json --win --x64",
+    "build:winx32": "node scripts/build.js && electron-builder build --config scripts/builder.json --win --ia32",
     "dev": "cross-env NODE_ENV=development node scripts/dev-runner.js",
     "dev:main": "cross-env NODE_ENV=development electron src/main/index.dev.js",
     "dev:renderer": "cross-env NODE_ENV=development node scripts/dev-runner.js --renderer",
     "lint": "eslint --ext .js,.vue src",
     "lint:fix": "eslint --ext .js,.vue --fix src",
     "pack": "npm run pack:main && npm run pack:renderer",
-    "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config scripts/webpack.main.config.js",
-    "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config scripts/webpack.renderer.config.js"
-  },
-  "build": {
-    "productName": "desktop-app",
-    "appId": "org.simulatedgreg.electron-vue",
-    "directories": {
-      "output": "build"
-    },
-    "files": [
-      "dist/electron/**/*"
-    ],
-    "dmg": {
-      "contents": [
-        {
-          "x": 410,
-          "y": 150,
-          "type": "link",
-          "path": "/Applications"
-        },
-        {
-          "x": 130,
-          "y": 150,
-          "type": "file"
-        }
-      ]
-    },
-    "mac": {
-      "icon": "build/icons/icon.icns"
-    },
-    "win": {
-      "icon": "build/icons/icon.ico"
-    },
-    "linux": {
-      "icon": "build/icons"
-    }
+    "pack:main": "node scripts/build.js --main",
+    "pack:renderer": "node scripts/build.js --renderer"
   },
   "dependencies": {
+    "sqlite3": "^4.0.2"
   },
   "devDependencies": {
-    "regenerator-runtime": "^0.12.1",
-    "winston": "^3.0.0",
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
     "@babel/plugin-proposal-decorators": "^7.0.0",
@@ -106,10 +70,10 @@
     "del": "^3.0.0",
     "devtron": "^1.4.0",
     "electron": "^2.0.8",
+    "electron-builder": "^20.28.3",
     "electron-debug": "^2.0.0",
     "electron-devtools-installer": "^2.2.0",
     "electron-packager": "^12.1.1",
-    "electron-builder": "^20.28.3",
     "eslint": "^5.4.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-loader": "^2.1.0",
@@ -128,6 +92,7 @@
     "multispinner": "^0.2.1",
     "node-loader": "^0.6.0",
     "ramda": "^0.25.0",
+    "regenerator-runtime": "^0.12.1",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.0",
     "url-loader": "^1.1.1",
@@ -141,6 +106,7 @@
     "vuex": "^3.0.1",
     "webpack": "^4.17.2",
     "webpack-dev-server": "^3.1.7",
-    "webpack-hot-middleware": "^2.18.2"
+    "webpack-hot-middleware": "^2.18.2",
+    "winston": "^3.0.0"
   }
 }

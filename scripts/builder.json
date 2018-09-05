@@ -1,0 +1,49 @@
+{
+  "productName": "Desktop APP",
+  "appId": "Personal.DesktopApp.Startkit.1.0.0",
+  "copyright": "Copyright © 2018 ${author}",
+  "directories": {
+    "output": "build"
+  },
+  "asar": true,
+  "artifactName": "${productName}-${version}.${ext}",
+  "compression": "maximum",
+  "files": [
+    "dist/electron/**/*"
+  ],
+  "dmg": {
+    "contents": [
+      {
+        "x": 410,
+        "y": 150,
+        "type": "link",
+        "path": "/Applications"
+      },
+      {
+        "x": 130,
+        "y": 150,
+        "type": "file"
+      }
+    ]
+  },
+  "mac": {
+    "icon": "build/icons/icon.icns"
+  },
+  "win": {
+    "icon": "build/icons/icon.ico",
+    "target": "nsis",
+    "legalTrademarks": "Eyas Personal"
+  },
+  "nsis": {
+    "allowToChangeInstallationDirectory": true,
+    "oneClick": false,
+    "menuCategory": true,
+    "allowElevation": false
+  },
+  "linux": {
+    "icon": "build/icons"
+  },
+  "electronDownload": {
+    "mirror": "http://npm.taobao.org/mirrors/electron/"
+  }
+}

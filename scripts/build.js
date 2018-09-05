@@ -5,7 +5,6 @@ process.env.NODE_ENV = 'production'
 const { say } = require('cfonts')
 const chalk = require('chalk')
 const del = require('del')
-const packager = require('electron-packager')
 const webpack = require('webpack')
 const Multispinner = require('multispinner')
 
@@ -22,7 +21,6 @@ const isCI = process.env.CI || false
 const argv = process.argv
 let isMain = argv.some(i => ~['--main', '-main'].indexOf(i))
 let isRenderer = argv.some(i => ~['--renderer', '-renderer'].indexOf(i))
-let noBuild = argv.some(i => ~['--nobuild', '-nobuild'].indexOf(i))
 
 if (!isMain && !isRenderer) {
   isMain = true
@@ -55,11 +53,8 @@ function build () {
   m.on('success', () => {
     process.stdout.write('\x1B[2J\x1B[0f')
     console.log(`\n\n${results}`)
-    // process.exit()
-    if (isMain && isRenderer) {
-      console.log(`${okayLog}take it away ${chalk.yellow('`electron-packager`')}\n`)
-      !noBuild && bundleApp()
-    }
+    console.log(`${okayLog}take it away ${chalk.yellow('`electron-builder`')}\n`)
+    process.exit()
   })
 
   isMain && pack(mainConfig).then(result => {
@@ -146,14 +141,4 @@ function greeting () {
     })
   } else console.log(chalk.yellow.bold('\n  lets-build'))
   console.log()
-}
-
-function bundleApp () {
-  packager(buildConfig)
-    .then(appPaths => {
-      console.log(`\n${doneLog}\n`)
-    }).catch(err => {
-      console.log(`\n${errorLog}${chalk.yellow('`electron-packager`')} says...\n`)
-      console.log(err + '\n')
-    })
 }

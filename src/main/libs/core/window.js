@@ -12,6 +12,7 @@ module.exports = class Window {
   constructor() {
     this._currentWindow = null
     this.instences = []
+    this.appEvent()
   }
 
   get main() {

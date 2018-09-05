@@ -7,6 +7,16 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Launch Program",
+      "program": "${file}",
+      "env": {
+        "NODE_ENV": "development",
+        "BUILD_TARGET": "win32"
+      },
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "启动程序",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
       "program": "${workspaceFolder}/src/main/index.dev.js",
