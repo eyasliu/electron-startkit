@@ -22,6 +22,7 @@ const isCI = process.env.CI || false
 const argv = process.argv
 let isMain = argv.some(i => ~['--main', '-main'].indexOf(i))
 let isRenderer = argv.some(i => ~['--renderer', '-renderer'].indexOf(i))
+let noBuild = argv.some(i => ~['--nobuild', '-nobuild'].indexOf(i))
 
 if (!isMain && !isRenderer) {
   isMain = true
@@ -57,7 +58,7 @@ function build () {
     // process.exit()
     if (isMain && isRenderer) {
       console.log(`${okayLog}take it away ${chalk.yellow('`electron-packager`')}\n`)
-      bundleApp()
+      !noBuild && bundleApp()
     }
   })
 
