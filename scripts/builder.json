@@ -1,13 +1,13 @@
 {
-  "productName": "Desktop APP",
-  "appId": "Personal.DesktopApp.Startkit.1.0.0",
+  "productName": "Eyas Test APP",
+  "appId": "Eyas.Personal.DesktopApp.Startkit.1.0.0",
   "copyright": "Copyright © 2018 ${author}",
   "directories": {
     "output": "build"
   },
   "asar": true,
   "artifactName": "${productName}-${version}.${ext}",
-  "compression": "maximum",
+  "compression": "store",
   "files": [
     "dist/electron/**/*"
   ],
@@ -35,10 +35,12 @@
     "legalTrademarks": "Eyas Personal"
   },
   "nsis": {
+    "include": "scripts/installer.nsi",
     "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": false,
     "oneClick": false,
-    "menuCategory": true,
-    "allowElevation": false
+    "menuCategory": false,
+    "perMachine": true
   },
   "linux": {
     "icon": "build/icons"
