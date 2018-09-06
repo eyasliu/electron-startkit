@@ -31,9 +31,11 @@
     "lint:fix": "eslint --ext .js,.vue --fix src",
     "pack": "npm run pack:main && npm run pack:renderer",
     "pack:main": "node scripts/build.js --main",
-    "pack:renderer": "node scripts/build.js --renderer"
+    "pack:renderer": "node scripts/build.js --renderer",
+    "postinstall": "install-app-deps"
   },
   "dependencies": {
+    "mkdirp": "^0.5.1",
     "sqlite3": "^4.0.2"
   },
   "devDependencies": {
@@ -74,6 +76,7 @@
     "electron-debug": "^2.0.0",
     "electron-devtools-installer": "^2.2.0",
     "electron-packager": "^12.1.1",
+    "electron-updater": "^3.1.2",
     "eslint": "^5.4.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-loader": "^2.1.0",

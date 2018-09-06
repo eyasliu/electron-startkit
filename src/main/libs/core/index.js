@@ -22,6 +22,7 @@ class Application extends Emmiter {
       Request: require('./adapter/request'),
       Response: require('./adapter/response'),
       Window: require('./window'),
+      Updater: require('./updater'),
     }
   }
 

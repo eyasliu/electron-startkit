@@ -2,6 +2,7 @@ require('./polyfill')
 require('./chromeArgs')
 const path = require('path')
 const APP = require('@main/libs/core')
+const config = require('@root/scripts/config')
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true
 
@@ -10,8 +11,17 @@ const application = new APP({
   basedir: basedir
 })
 
+// load config
+application.config = config
+
 // load logger
 application.$use(require('./logger'))
+
+// load updater
+application.$use(require('./updater'))
+
+// load sqlitedb
+application.$use(require('./db'))
 
 // load window manager
 application.$use(require('./window'))
