@@ -1,3 +1,4 @@
+const Emmiter = require('events')
 const Router = require('./router')
 
 let adapterID = 1
@@ -9,7 +10,7 @@ let adapterID = 1
  * 
  * base 是所有适配器的父类，定义了一个适配器至少该有的功能
  */
-module.exports = class BaseAdapter {
+module.exports = class BaseAdapter extends Emmiter {
   constructor() {
     this.adapterID = adapterID++ 
     this.name = ''
@@ -22,6 +23,7 @@ module.exports = class BaseAdapter {
       adapter: this
     })
     this.routerHandler = this.router.onData
+    this.emit('adapter.instence', this)
   }
 
   /**
