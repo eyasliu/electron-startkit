@@ -6,6 +6,12 @@ const { Preloader } = require('./util')
 
 class BaseController {}
 
+/**
+ * controller loader
+ * 
+ * 1. 先定义一个空的 Controller
+ * 2. 在自动执行init函数的时候才把controler的真实的类 api 拼回去
+ */
 class ControllerLoader extends Preloader {
   constructor(fn, context) {
     const instence = new (class Controller extends BaseController {})()
@@ -14,6 +20,10 @@ class ControllerLoader extends Preloader {
     this.context = context
     this.handler = fn
   }
+  
+  /**
+   * 拼好 Controller 的真实 api
+   */
   initialize() {
     delete this.instence.init
 

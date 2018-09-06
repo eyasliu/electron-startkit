@@ -1,6 +1,10 @@
 const Emmiter = require('events')
 const loader = require('./loader')
 
+/**
+ * 应用的上下文对象，整个应用的数据和函数工具都会放在这里，要什么东西直接从这里拿，
+ * 推荐用对象解构的形式按需读取数据
+ */
 class Application extends Emmiter {
   constructor() {
     super()
@@ -12,7 +16,7 @@ class Application extends Emmiter {
   }
 
   /**
-   * Class
+   * 一部分内核定义的类，需要在外面初始化，统一先放到 Class 变量中
    */
   _class() {
     this.Class = {
@@ -42,13 +46,25 @@ class Application extends Emmiter {
     return this
   }
 
+  /**
+   * 使用 loader 解析
+   */
   $loader(type) {
     return this._loader(type)
   }
+
+  /**
+   * 添加自定义的loader
+   */
   $addLoader(...args) {
     return loader.addLoader.apply(undefined, args)
   }
 
+  /**
+   * 安全的设置一个上下文变量
+   * @param {string} key 
+   * @param {any} val 
+   */
   $set(key, val) {
     if (this[key]) {
       throw new Error('conflict app.' + key + ' is already defined.')
@@ -57,7 +73,7 @@ class Application extends Emmiter {
   }
 
   /**
-   * auto run loader init method
+   * 对于用loader 处理过的东西，如果有init函数都会自动执行一次
    */
   async _autoInit() {
     this.emit('beforeInit', this)
@@ -76,6 +92,7 @@ class Application extends Emmiter {
    * 
    * 1. run init method
    * 2. run auth method for adapter
+   * 3. Run, Barry, run!!!
    */
   $start() {
     this._autoInit(this)

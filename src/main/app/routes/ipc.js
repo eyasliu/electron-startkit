@@ -3,6 +3,7 @@ module.exports = ({
   controller: { machine }
 }) => {
   ipc.routes({
-    'healthcheck': machine.healthcheck
+    'healthcheck': machine.healthcheck,
+    'getLogin': machine.login,
   })
 }

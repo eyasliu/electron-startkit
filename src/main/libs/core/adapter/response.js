@@ -9,6 +9,11 @@ const timeoutBody = {
   error: 'Error: gateway timeout 504'
 }
 
+/**
+ * 适配器数据回应类
+ * 
+ * @约定 status 使用 http 的状态码，表示回应状态
+ */
 class Response extends Emmiter {
   constructor(req) {
     super()
@@ -16,6 +21,9 @@ class Response extends Emmiter {
     this.cmd = req.cmd
     this.seqno = req.seqno
 
+    /**
+     * 最初始的默认状态应该是 404
+     */
     this.status = defaultStatus
     this.body = defaultBody
     this.msg = defaultMsg
@@ -25,6 +33,9 @@ class Response extends Emmiter {
     this.done = this._done.bind(this)
   }
 
+  /**
+   * 设置一下默认的成功返回状态
+   */
   setDefaultOk() {
     if (this.status === defaultStatus) {
       this.status = 200
@@ -39,11 +50,13 @@ class Response extends Emmiter {
     }
   }
 
+  // 通知已处理
   _done() {
     this.emit('send')
     this.isResolve = true
   }
 
+  // 通知超时
   _timeout() {
     this.msg = 'timeout'
     this.status = 504
@@ -51,6 +64,9 @@ class Response extends Emmiter {
     this.send()
   }
 
+  /**
+   * 等到通知成功或者失败
+   */
   awaitSend() {
     if (this.isResolve) {
       return Promise.resolve()
@@ -69,6 +85,11 @@ class Response extends Emmiter {
     })
   }
 
+  /**
+   * 序列化回应数据，获取回应数据
+   * 
+   * @return {object}
+   */
   toJSON() {
     return {
       msg: this.msg,
@@ -80,6 +101,10 @@ class Response extends Emmiter {
   }
 }
 
+/**
+ * 使得回应可以扩展，比如需要增加 send(), ok(), json(), notfound() 之类的快捷工具
+ * @param {object} mixin 扩展函数集合
+ */
 Response.extends = (mixin) => {
   for (let [key, val] of Object.entries(mixin)) {
     Response.prototype[key] = val

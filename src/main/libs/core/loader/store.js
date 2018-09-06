@@ -1,5 +1,5 @@
 /**
- * 全局状态数据
+ * 全局状态数据解析器，与 controller 类似处理方式一样，你看他们都继承至 Preloader
  */
 
 const { Preloader } = require('./util')

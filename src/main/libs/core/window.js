@@ -11,14 +11,22 @@ const windowCurrentSetting = {
 module.exports = class Window {
   constructor() {
     this._currentWindow = null
-    this.instences = []
+    this.instences = [] // 已经打开的窗口
     this.appEvent()
   }
 
+  /**
+   * 获取当前激活的窗口
+   */
   get main() {
     return this._currentWindow
   }
 
+  /**
+   * 新建一个新的窗口，并打开指定url，并激活
+   * @param {string} config.url 新建窗口后自动打开的url
+   * @param {...any} config ... 其他 BrowserWindow 的参数
+   */
   create(config = {}) {
     this._currentWindow = new BrowserWindow({
       ...windowCurrentSetting,
@@ -40,14 +48,16 @@ module.exports = class Window {
     return this._currentWindow
   }
 
+  /**
+   * BrowserWindow.loadURL 别名
+   */
   loadURL(...args) {
     return this.main.loadURL(...args)
   }
 
-  destroy() {}
-
-  message() {}
-
+  /**
+   * 和窗口有关的全局事件监听
+   */
   appEvent() {
     app.on('window-all-closed', () => {
       if (process.platform !== 'darwin') {

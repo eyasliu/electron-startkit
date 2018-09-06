@@ -10,8 +10,8 @@ module.exports = function({ window }) {
     }
   
     window.create({
-      width: 1024,
-      height: 768,
+      width: 1920,
+      height: 1024,
       // frame: false,
       url: winURL,
       devtool: true

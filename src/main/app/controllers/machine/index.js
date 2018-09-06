@@ -1,19 +1,21 @@
-module.exports = ({ store: { user }, db }) => ({
+module.exports = ({ 
+  store: { user },
+  adapter: { ipc },
+  db,
+}) => ({
   data: {
     demo: true
   },
   init(app) {
     // console.log(app, this)
   },
-  async reboot (req, res) {
-    const data = req.data
+  login(req, res) {
+    user.login({ id: 1234 })
+    const resdata = res.toJSON()
 
-    const done = data
-
-    res.msg = 'OK'
-    res.ok({
-      time: new Date(),
-      ...done
+    ipc.send({
+      ...resdata,
+      test: 'hahahahahahahahahahhaha'
     })
   },
   healthcheck(req, res) {

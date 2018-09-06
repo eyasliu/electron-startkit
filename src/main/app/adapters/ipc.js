@@ -1,11 +1,13 @@
 const { ipcMain } = require('electron')
 
-module.exports = ({ Class, log }) => {
+module.exports = ({ Class, log, window }) => {
   class IPC extends Class.Adapter {
     constructor(options) {
       super()
       this.instence = ipcMain
       this.name = 'IPC'
+
+      this.defaultChannel = options.defaultChannel
   
       this.syncChannel = options.syncChannel || []
       this.asyncChannel = options.asyncChannel || []
@@ -41,10 +43,17 @@ module.exports = ({ Class, log }) => {
         isSync ? this.syncMessage(e, data, channel) : this.asyncMessage(e, data, channel)
       })
     }
+
+    sendHandler(body, channel = this.defaultChannel) {
+      window.main.webContents.send(channel, body)
+      
+      return body
+    }
   }
 
   return new IPC({
     syncChannel: ['sync'],
-    asyncChannel: ['async']
+    asyncChannel: ['async'],
+    defaultChannel: 'async'
   })
 }
