@@ -8,6 +8,7 @@ module.exports = class ClientAdapter extends Adapter {
       throw new Error('client adapter options required host & port')
     }
 
+    this.name = options.name || `Client ${this.adapterID}`
     this.host = options.host
     this.port = options.port
 

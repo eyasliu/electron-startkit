@@ -1,3 +1,4 @@
 module.exports = {
-  ipc: require('./ipc')
+  ipc: require('./ipc'),
+  server: require('./server'),
 }

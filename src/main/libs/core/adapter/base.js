@@ -12,6 +12,7 @@ let adapterID = 1
  */
 module.exports = class BaseAdapter extends Emmiter {
   constructor() {
+    super()
     this.adapterID = adapterID++ 
     this.name = ''
 
@@ -23,7 +24,15 @@ module.exports = class BaseAdapter extends Emmiter {
       adapter: this
     })
     this.routerHandler = this.router.onData
+    this.useResponse(this._notifyRouterManualSend.bind(this))
     this.emit('adapter.instence', this)
+  }
+
+  /**
+   * 通过手动执行 send 方法回应数据的方式，也要告诉路由，因为路由那边可能还在等待，时间长了路由会超时，触发超时会导致意料之外的问题
+   */
+  _notifyRouterManualSend(data) {
+    this.router.adapterManualSend(data)
   }
 
   /**

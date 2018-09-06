@@ -31,6 +31,7 @@ class Response extends Emmiter {
     this.isResolve = false
 
     this.done = this._done.bind(this)
+    this.cancel = this._cancel.bind(this)
   }
 
   /**
@@ -56,6 +57,10 @@ class Response extends Emmiter {
     this.isResolve = true
   }
 
+  _cancel() {
+    this.emit('cancel')
+  }
+
   // 通知超时
   _timeout() {
     this.msg = 'timeout'
@@ -72,7 +77,7 @@ class Response extends Emmiter {
       return Promise.resolve()
     }
 
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         this._timeout()
       }, this.requestMaxTime)
@@ -80,6 +85,10 @@ class Response extends Emmiter {
       this.on('send', () => {
         resolve()
         this.isResolve = true
+        clearTimeout(timer)
+      })
+      this.on('cancel', () => {
+        reject()
         clearTimeout(timer)
       })
     })

@@ -16,7 +16,9 @@ class Router {
     this.adapter = option.adapter // 适配器
     this.parser = option.parser || this.defaultParser // 路由名称解析器
 
+    this.progress = new Map() // 正在处理中的队列
     this.onData = this.onDataHandler.bind(this) // 给适配器用的通知有数据过来，并处理
+    this.adapterManualSend = this._adapterManualSend.bind(this)
   }
 
   // 默认的解析器只会返回 cmd 字段
@@ -44,25 +46,41 @@ class Router {
     const route = this.parser(data)
     const handler = this.routes[route]
 
+    const seqno = data.seqno
     const request = new Request(data)
     const response = new Response(request)
 
+    this.progress.set(seqno, [request, response])
     
-    if (typeof handler === 'undefined') {
-      // 404 not found
-      notFoundHandler(request, response)
-    }else if (typeof handler === 'function') {
-      // 交给具体的处理函数，并等待返回
-      handler(request, response)
-      await response.awaitSend()
-    } else {
-      // just route value
-      response.send(handler)
+    try {
+      if (typeof handler === 'undefined') {
+        // 404 not found
+        notFoundHandler(request, response)
+      }else if (typeof handler === 'function') {
+        // 交给具体的处理函数，并等待返回
+        handler(request, response)
+        await response.awaitSend()
+      } else {
+        // just route value
+        response.send(handler)
+      }
+  
+      this.process.delete(seqno)
+      const responseData = response.toJSON()
+  
+      return responseData
+    } catch(e) {
+      this.process.delete(seqno)
+      throw new Error(e)
     }
+  }
 
-    const responseData = response.toJSON()
-
-    return responseData
+  _adapterManualSend(data) {
+    const seqno = data.seqno
+    if (this.process.has(seqno)) {
+      const [_, response] = this.process.get(seqno)
+      response.cancel()
+    }
   }
 }
 

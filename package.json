@@ -35,10 +35,10 @@
     "postinstall": "install-app-deps"
   },
   "dependencies": {
-    "mkdirp": "^0.5.1",
     "sqlite3": "^4.0.2"
   },
   "devDependencies": {
+    "mkdirp": "^0.5.1",
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
     "@babel/plugin-proposal-decorators": "^7.0.0",

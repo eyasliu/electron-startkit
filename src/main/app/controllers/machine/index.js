@@ -9,8 +9,9 @@ module.exports = ({
   init(app) {
     // console.log(app, this)
   },
-  login(req, res) {
+  healthcheck(req, res) {
     user.login({ id: 1234 })
+    res.status = 200
     const resdata = res.toJSON()
 
     ipc.send({
@@ -18,7 +19,7 @@ module.exports = ({
       test: 'hahahahahahahahahahhaha'
     })
   },
-  healthcheck(req, res) {
+  login(req, res) {
     user.login({ id: 1234 })
     db.get('SELECT 1 + 1;', (err, dbRes) => {
       if (err) {

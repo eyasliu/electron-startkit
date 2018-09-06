@@ -61,6 +61,74 @@ module.exports = app => {
     const name = ad.name || key
     ad.useRequest(requestLog(name))
     ad.useResponse(responseLog(name))
+    /**
+     * adapter event listen to logger
+     */
+
+    if (ad instanceof Class.ServerAdapter) {
+      // server
+      ad.on('adapter.server.listening', () => {
+        log.info(`adapter ${name} is successfully listening.`)
+      })
+      ad.on('adapter.server.close', () => {
+        log.info(`adapter ${name} is close.`)
+      })
+      // ad.on('adapter.server.connection', () => {
+      //   log.info(`adapter ${name} is successfully listening.`)
+      // })
+      ad.on('adapter.server.error', (err) => {
+        log.error(`adapter ${name} had error, ${err}.`)
+      })
+
+      // client socket
+      ad.on('adapter.connect', (socket) => {
+        log.info(`adapter ${name} socketID=${socket.socketID} is connected.`)
+      })
+      ad.on('adapter.timeout', (socket) => {
+        log.warn(`adapter ${name} socketID=${socket.socketID} is timeout.`)
+      })
+      ad.on('adapter.error', (socket, err) => {
+        log.error(`adapter ${name} socketID=${socket.socketID} is error. ${err}`)
+      })
+      ad.on('adapter.end', (socket) => {
+        log.info(`adapter ${name} socketID=${socket.socketID} is end.`)
+      })
+      ad.on('adapter.close', (socket, hadError) => {
+        if (hadError) {
+          log.error(`adapter ${name} socketID=${socket.socketID} is close because of some error.`)
+        } else {
+          log.info(`adapter ${name} socketID=${socket.socketID} is close.`)
+        }
+      })
+    } else {
+      ad.on('adapter.connect', () => {
+        log.info(`adapter ${name} is connected.`)
+      })
+      ad.on('adapter.timeout', () => {
+        log.warn(`adapter ${name} is timeout.`)
+      })
+      ad.on('adapter.error', (err) => {
+        log.error(`adapter ${name} is error. ${err}`)
+      })
+      ad.on('adapter.end', () => {
+        log.info(`adapter ${name} is end.`)
+      })
+      ad.on('adapter.close', (hadError) => {
+        if (hadError) {
+          log.error(`adapter ${name} is close because of some error.`)
+        } else {
+          log.info(`adapter ${name} is close.`)
+        }
+      })
+    }
+
+    
+  }
+
+  for (let [key, ad] of Object.entries(adapter)) {
+    const name = ad.name || key
+    
+    ad.useResponse(responseLog(name))
   }
 
   /**
