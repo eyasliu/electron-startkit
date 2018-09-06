@@ -1,13 +1,13 @@
 {
-  "productName": "Eyas Test APP",
-  "appId": "Eyas.Personal.DesktopApp.Startkit.1.0.0",
+  "productName": "Desktop Test APP",
+  "appId": "Desktop.Personal.DesktopApp.Startkit.1.0.0",
   "copyright": "Copyright © 2018 ${author}",
   "directories": {
     "output": "build"
   },
   "asar": true,
   "artifactName": "${productName}-${version}.${ext}",
-  "compression": "store",
+  "compression": "maximum",
   "files": [
     "dist/electron/**/*"
   ],
@@ -27,23 +27,23 @@
     ]
   },
   "mac": {
-    "icon": "build/icons/icon.icns"
+    "icon": "build/resources/icons/icon.icns"
   },
   "win": {
-    "icon": "build/icons/icon.ico",
+    "icon": "build/resources/icons/icon.ico",
     "target": "nsis",
     "legalTrademarks": "Eyas Personal"
   },
   "nsis": {
     "include": "scripts/installer.nsi",
     "allowToChangeInstallationDirectory": true,
-    "createDesktopShortcut": false,
+    "createDesktopShortcut": true,
     "oneClick": false,
     "menuCategory": false,
     "perMachine": true
   },
   "linux": {
-    "icon": "build/icons"
+    "icon": "build/resources/icons"
   },
   "electronDownload": {
     "mirror": "http://npm.taobao.org/mirrors/electron/"

@@ -31,7 +31,7 @@ SpaceTexts show
 !macroend
 
 ; 卸载脚本
-!macro customRemoveFiles
+!macro customUnInstall
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 
   Delete "$SMPROGRAMS\$StartMenuFolder\${PRODUCT_NAME}.lnk"
