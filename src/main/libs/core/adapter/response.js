@@ -88,7 +88,7 @@ class Response extends Emmiter {
         clearTimeout(timer)
       })
       this.on('cancel', () => {
-        reject()
+        reject(new Error('cancel'))
         clearTimeout(timer)
       })
     })

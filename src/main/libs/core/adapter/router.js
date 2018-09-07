@@ -56,7 +56,7 @@ class Router {
       if (typeof handler === 'undefined') {
         // 404 not found
         notFoundHandler(request, response)
-      }else if (typeof handler === 'function') {
+      } else if (typeof handler === 'function') {
         // 交给具体的处理函数，并等待返回
         handler(request, response)
         await response.awaitSend()
@@ -65,20 +65,20 @@ class Router {
         response.send(handler)
       }
   
-      this.process.delete(seqno)
+      this.progress.delete(seqno)
       const responseData = response.toJSON()
   
       return responseData
-    } catch(e) {
-      this.process.delete(seqno)
+    } catch (e) {
+      this.progress.delete(seqno)
       throw new Error(e)
     }
   }
 
   _adapterManualSend(data) {
     const seqno = data.seqno
-    if (this.process.has(seqno)) {
-      const [_, response] = this.process.get(seqno)
+    if (this.progress.has(seqno)) {
+      const [ , response ] = this.progress.get(seqno)
       response.cancel()
     }
   }

@@ -25,8 +25,17 @@ module.exports = ({ Class, log, window }) => {
   
     onMessage(isSync) {
       return async (event, arg, channel) => {
-        const res = await this.onData(arg)
+        let res
+        try {
+          res = await this.onData(arg)
+        } catch (err) {
+          if (err.message === 'Error: cancel') {
+            return
+          }
 
+          throw err
+        }
+        
         if (isSync) {
           event.returnValue = res
         } else {
@@ -44,7 +53,7 @@ module.exports = ({ Class, log, window }) => {
       })
     }
 
-    sendHandler(body, channel = this.defaultChannel) {
+    sendProgress(body, channel = this.defaultChannel) {
       window.main.webContents.send(channel, body)
       
       return body

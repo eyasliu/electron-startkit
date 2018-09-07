@@ -121,14 +121,6 @@ module.exports = app => {
         }
       })
     }
-
-    
-  }
-
-  for (let [key, ad] of Object.entries(adapter)) {
-    const name = ad.name || key
-    
-    ad.useResponse(responseLog(name))
   }
 
   /**

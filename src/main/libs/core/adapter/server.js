@@ -24,8 +24,6 @@ class ServerAdapter extends Adapter {
     this._startServer()
   }
 
-  _heartbeat() {}
-
   _startServer() {
     this.server = net.createServer()
     this._serverEvents(this.server)
@@ -33,9 +31,8 @@ class ServerAdapter extends Adapter {
   }
 
   _restartServer() {}
-
   
-  /***********************server events *************************/
+  /** *********************server events *************************/
   _serverEvents(instence) {
     instence.on('listening', this._onServerListening.bind(this))
     instence.on('connection', this._onServerConnection.bind(this))
@@ -58,12 +55,9 @@ class ServerAdapter extends Adapter {
   _onServerError(err) {
     this.emit('adapter.server.error', err)
   }
-  /***********************server events end *************************/
+  /** *********************server events end *************************/
 
-
-
-
-  /***********************socket events *************************/
+  /** *********************socket events *************************/
   _socketEvents(socket) {
     // socket.on('lookup', this._onSocketLookup.bind(this, socket))
     socket.on('connect', this._onSocketConnect.bind(this, socket))
@@ -95,9 +89,7 @@ class ServerAdapter extends Adapter {
     this.emit('close', socket, hadErr)
   }
   
-  /***********************socket events end *************************/
-  
-  _onConnect(socket) {}
+  /** *********************socket events end *************************/
 }
 
 module.exports = ServerAdapter
