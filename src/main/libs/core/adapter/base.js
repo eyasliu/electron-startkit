@@ -64,7 +64,7 @@ module.exports = class BaseAdapter extends Emmiter {
    * @param {object} data 请求进来的数据
    */
   async onData(data) {
-    const requestRawData = data
+    const requestRawData = utils.saveJsonParse(data)
     // reduce request middleware，得到中间件处理后的数据
     const requestData = this._applyRequestMdl(requestRawData)
 
@@ -200,7 +200,7 @@ module.exports = class BaseAdapter extends Emmiter {
       seqno = resCmd
     }
 
-    const pack = this.msgPackEncode(body)
+    const pack = this.packer(body)
 
     return new Promise(async (resolve, reject) => {
       if (Number(delay)) {
@@ -240,19 +240,6 @@ module.exports = class BaseAdapter extends Emmiter {
    */
   sendHandler(body) {
     throw new Error('Sub Class not impleament sendHandler(buffer)')
-  }
-
-  /**
-   * 解析收到的数据包，由子类实现
-   * @param {Buffer} buffer 收到的数据包
-   * 
-   * @return {Array} 解析好的数据数组
-   */
-  msgPackDecode(buffer) {
-    throw new Error('Sub Class not impleament msgPackDecode(buffer)')
-  }
-  msgPackEncode(body) {
-    throw new Error('Sub Class not impleament msgPackEncode(body)')
   }
 
   /**

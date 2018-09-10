@@ -1,19 +1,26 @@
 const net = require('net')
 const Adapter = require('./base')
+const url = require('url')
 
-module.exports = class ClientAdapter extends Adapter {
+module.exports = class TCPClient extends Adapter {
   constructor(options) {
     super()
 
-    if (!options.host || !options.port) {
-      throw new Error('client adapter options required host & port')
-    }
+    const urlParse = url.parse(options.uri || options.url)
 
+    // if (!options.host || !options.port) {
+    //   throw new Error('client adapter options required host & port')
+    // }
     this.name = options.name || `Client ${this.adapterID}`
-    this.host = options.host
-    this.port = options.port
+    this.host = options.host || urlParse.hostname
+    this.port = options.port || urlParse.port
+
+    this.packer = options.packer || this.packer
+    this.parser = options.parser || this.parser
 
     this._reconnectTimeout = 1000 // 自动重连间隔时间
+
+    this.instence = null
   }
 
   init() {
@@ -21,21 +28,28 @@ module.exports = class ClientAdapter extends Adapter {
   }
 
   /**
-   * 客户端验证，由子类实现，默认行为是不验证
+   * 将请求数据转化成要发送的 buffer, 这里是默认值
+   * @param {object} body 请求数据
    * 
-   * @return {Promise|boolean} 验证结果 bool 值
+   * @return {Buffer}
    */
-  auth() {
-    return true
+  packer(body) {
+    return Buffer.from(JSON.stringify(body))
   }
 
   /**
-   * 如何发送心跳，由子类实现，默认行为是不发送
+   * 将服务器发过来的数据包解析成真实数据，这里要处理tcp的粘包、半包、连包问题
+   * 
+   * @param {Buffer} buffer 收到的数据包
+   * @return {Array} 解析到的数据
    */
-  heartbeat() {}
+  parser(buffer) {
+    return []
+  }
 
-  // 解析收到的数据包
-  _paseBody(buffer) {}
+  sendHandler(body, pkg) {
+    this.instence.write(pkg)
+  }
 
   /**
    * 连接 socket 服务器
@@ -76,7 +90,7 @@ module.exports = class ClientAdapter extends Adapter {
    * socket 收到数据包
    */
   _onMessage(pack) {
-    const datas = this.parser(pack)
+    const datas = this.parser(pack) || []
     datas.forEach(data => this.onData(data))
 
     // this.emit('adapter.message', err) // 这个事件太频繁了，担心会有性能问题，就不发事件了, 想要处理的话改用中间件吧 useRequest(fn)
@@ -109,6 +123,7 @@ module.exports = class ClientAdapter extends Adapter {
   _onClose() {
     this.emit('adapter.close')
 
+    // 断开重连
     setTimeout(() => {
       this._reconnect()
     }, this._reconnectTimeout)

@@ -21,12 +21,16 @@ class Application extends Emmiter {
   _class() {
     this.Class = {
       Adapter: require('./adapter/base'),
+      TCPClient: require('./adapter/tcpclient'),
+      TCPServer: require('./adapter/tcpserver'),
+      IPC: require('./adapter/ipc'),
       ClientAdapter: require('./adapter/client'),
       ServerAdapter: require('./adapter/server'),
       Request: require('./adapter/request'),
       Response: require('./adapter/response'),
       Window: require('./window'),
       Updater: require('./updater'),
+      Hprose: require('./hprose')
     }
   }
 

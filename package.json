@@ -35,10 +35,10 @@
     "postinstall": "install-app-deps"
   },
   "dependencies": {
+    "hprose": "^2.0.51",
     "sqlite3": "^4.0.2"
   },
   "devDependencies": {
-    "mkdirp": "^0.5.1",
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
     "@babel/plugin-proposal-decorators": "^7.0.0",
@@ -91,6 +91,7 @@
     "import-modules": "^1.1.0",
     "less-loader": "^4.1.0",
     "mini-css-extract-plugin": "^0.4.2",
+    "mkdirp": "^0.5.1",
     "module-alias": "^2.1.0",
     "multispinner": "^0.2.1",
     "node-loader": "^0.6.0",

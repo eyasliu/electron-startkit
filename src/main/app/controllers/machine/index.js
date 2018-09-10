@@ -1,7 +1,7 @@
 module.exports = ({ 
   store: { user },
-  adapter: { ipc },
-  db,
+  adapter: { ipc, db },
+  // rpc: { db }
 }) => ({
   data: {
     demo: true
@@ -10,14 +10,14 @@ module.exports = ({
     // console.log(app, this)
   },
   healthcheck(req, res) {
-    user.login({ id: 1234 })
-    res.status = 200
-    const resdata = res.toJSON()
+    // user.login({ id: 1234 })
+    // res.status = 200
+    // const resdata = res.toJSON()
 
-    ipc.send({
-      ...resdata,
-      test: 'hahahahahahahahahahhaha'
-    })
+    // ipc.send({
+    //   ...resdata,
+    //   test: 'hahahahahahahahahahhaha'
+    // })
   },
   login(req, res) {
     user.login({ id: 1234 })
