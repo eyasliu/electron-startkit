@@ -1,6 +1,7 @@
 module.exports = ({ 
   store: { user },
   adapter: { ipc, db },
+  updater,
   // rpc: { db }
 }) => ({
   data: {
@@ -31,4 +32,14 @@ module.exports = ({
       }, 'haha', 303)
     })
   },
+  checkUpdate(req, res) {
+    updater.checkForUpdates()
+    res.send({
+      data: 'ok'
+    })
+  },
+  upgradeNow(req, res) {
+    const data = req.body
+    updater.quitAndInstall(data.slient, data.forceRun)
+  }
 })

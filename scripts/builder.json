@@ -11,6 +11,13 @@
   "files": [
     "dist/electron/**/*"
   ],
+  "publish": [
+    {
+      "provider": "generic",
+      "url": "http://localhost:8888/download/",
+      "channel": "latest"
+    }
+  ],
   "dmg": {
     "contents": [
       {

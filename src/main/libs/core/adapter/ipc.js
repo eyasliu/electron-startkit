@@ -6,6 +6,7 @@ module.exports = class IPC extends Adapter {
     super(options)
     this.instence = ipcMain
     this.name = 'IPC'
+    this.window = options.window
 
     this.defaultChannel = options.defaultChannel
 
@@ -55,7 +56,7 @@ module.exports = class IPC extends Adapter {
   }
 
   sendProgress(body, channel = this.defaultChannel) {
-    window.main.webContents.send(channel, body)
+    this.window.main.webContents.send(channel, body)
     
     return body
   }

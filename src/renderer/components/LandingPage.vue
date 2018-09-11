@@ -11,18 +11,14 @@
 
       <div class="right-side">
         <div class="doc">
-          <div class="title">Getting Started</div>
-          <p>
-            electron-vue comes packed with detailed documentation that covers everything from
-            internal configurations, using the project structure, building your application,
-            and so much more.
-          </p>
-          <button @click="open('https://simulatedgreg.gitbooks.io/electron-vue/content/')">Read the Docs</button><br><br>
-        </div>
-        <div class="doc">
-          <div class="title alt">Other Documentation</div>
-          <button class="alt" @click="open('https://electron.atom.io/docs/')">Electron</button>
-          <button class="alt" @click="open('https://vuejs.org/v2/guide/')">Vue.js</button>
+          <div class="title">更新功能演示</div>
+          <pre>
+            {{version}}
+          </pre>
+          <button @click="checkUpdate">立即检查更新</button><br><br>
+          <button v-if="status == 'update-downloaded'" @click="upgradeNow(true)">静默更新</button><br><br>
+          <button v-if="status == 'update-downloaded'" @click="upgradeNow(false)">手动更新</button><br><br>
+
         </div>
       </div>
     </main>
@@ -35,22 +31,48 @@
   console.log(ipc)
   export default {
     name: 'landing-page',
+    data() {
+      return {
+        version: '未检查更新',
+        status: 'wait',
+      }
+    },
     components: { SystemInformation },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
+      },
+      checkUpdate() {
+        ipc.send({
+          cmd: 'checkUpdate'
+        }, true)
+      },
+      upgradeNow(isSlient) {
+        ipc.send({
+          cmd: 'upgradenow',
+          body: {
+            slient: isSlient,
+            forceRun: false
+          }
+        })
       }
     },
     mounted() {
-      setInterval(() => {
-        ipc.send({
-          cmd: 'healthcheck'
-        }).then(res => {
-          console.log(res)
-        }).catch(res => {
-          console.log('error: ', res)
-        })
-      }, 5000)
+      // setInterval(() => {
+      //   ipc.send({
+      //     cmd: 'healthcheck'
+      //   }).then(res => {
+      //     console.log(res)
+      //   }).catch(res => {
+      //     console.log('error: ', res)
+      //   })
+      // }, 5000)
+
+      ipc.on('versionupdate', body => {
+        this.status = body.data.status
+        console.log('versionupdate', body)
+        this.version = JSON.stringify(body, null, 4)
+      })
     }
   }
 </script>

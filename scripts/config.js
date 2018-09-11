@@ -8,7 +8,7 @@ module.exports = {
   },
   sqlitedb: path.resolve('db/main.db'),
   modules: {
-    updater: false, // npm install -D electron-updater
+    updater: true, // npm install -D electron-updater
     sqlitedb: false, // npm install -S sqlite3
     logger: true, // npm install -D winston
     hprose: true, // npm install -D hprose

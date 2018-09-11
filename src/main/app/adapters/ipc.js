@@ -1,8 +1,9 @@
 
-module.exports = ({ Class: { IPC } }) => {
+module.exports = ({ Class: { IPC }, window }) => {
   return new IPC({
     syncChannel: ['sync'],
     asyncChannel: ['async'],
-    defaultChannel: 'async'
+    defaultChannel: 'async',
+    window,
   })
 }
