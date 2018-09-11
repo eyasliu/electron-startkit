@@ -75,6 +75,9 @@ class Router {
     }
   }
 
+  /**
+   * 处理因为没有手动调用了 res.send
+   */
   _adapterManualSend(data) {
     const seqno = data.seqno
     if (this.progress.has(seqno)) {

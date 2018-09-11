@@ -3,7 +3,7 @@ const { ipcMain } = require('electron')
 
 module.exports = class IPC extends Adapter {
   constructor(options) {
-    super()
+    super(options)
     this.instence = ipcMain
     this.name = 'IPC'
 
@@ -48,6 +48,7 @@ module.exports = class IPC extends Adapter {
     this.instence.on(channel, async (e, arg) => {
       const data = {
         ...arg,
+        channel,
       }
       isSync ? this.syncMessage(e, data, channel) : this.asyncMessage(e, data, channel)
     })

@@ -49,23 +49,28 @@ module.exports = app => {
   /**
    * logger request / response
    */
-  const requestLog = name => data => {
-    log.info(`${name} <== ${JSON.stringify(data)}`)
-  }
-  
-  const responseLog = name => data => {
-    log.info(`${name} ==> ${JSON.stringify(data)}`)
+  const accessLog = type => name => _data => {
+    if (_data.log === false) {
+      return _data
+    }
+    const data = { ..._data }
+    const dataField = data.data ? 'data' : 'body'
+    const bodyStr = JSON.stringify(data.data || data.body || '{}')
+    if (bodyStr.length > 300) {
+      data[dataField] = bodyStr.substring(0, 300) + '......'
+    }
+    log.info(`${name} ${type === 0 ? '==>' : '<=='} ${JSON.stringify(data).replace(/\\/g, '')}`)
   }
 
   for (let [key, ad] of Object.entries(adapter)) {
     const name = ad.name || key
-    ad.useRequest(requestLog(name))
-    ad.useResponse(responseLog(name))
+    ad.useRequest(accessLog(1)(name))
+    ad.useResponse(accessLog(0)(name))
     /**
      * adapter event listen to logger
      */
 
-    if (ad instanceof Class.ServerAdapter) {
+    if (ad instanceof Class.TCPServer) {
       // server
       ad.on('adapter.server.listening', () => {
         log.info(`adapter ${name} is successfully listening.`)

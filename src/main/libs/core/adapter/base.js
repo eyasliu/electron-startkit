@@ -13,7 +13,7 @@ let adapterID = 1
  * @constructor 
  */
 module.exports = class BaseAdapter extends Emmiter {
-  constructor() {
+  constructor(options) {
     super()
     this.adapterID = adapterID++ 
     this.name = ''
@@ -26,6 +26,7 @@ module.exports = class BaseAdapter extends Emmiter {
     this.responseMiddleware = [] // 由适配器发送出去的数据称为回应(response), 数据回应的中间件
 
     this._sendProcessMap = new Map()
+    this._getSeqno = options.getSeqno || this._getSeqno
 
     // 一个适配器绑定一个路由
     this.router = new Router({
@@ -53,6 +54,7 @@ module.exports = class BaseAdapter extends Emmiter {
     if (this._sendProcessMap.has(seqno)) {
       const [resolve] = this._sendProcessMap.get(seqno)
       resolve(data)
+      data.isSend = true
     }
   }
   _getReqSeqno(data) {
@@ -65,28 +67,47 @@ module.exports = class BaseAdapter extends Emmiter {
    */
   async onData(data) {
     const requestRawData = utils.saveJsonParse(data)
+    
     // reduce request middleware，得到中间件处理后的数据
     const requestData = this._applyRequestMdl(requestRawData)
 
+    // 因为调用了 send 而返回，就不要再经过路由了
+    // TODO: 如果还是需要经过路由，则需要处理再次 response
+    if (requestData.isSend) {
+      delete requestData.isSend
+      return requestData
+    }
+
+
     // 再给路由处理业务逻辑
-    const responseRawData = await this.routerHandler(requestData)
+    try {
+      const responseRawData = await this.routerHandler(requestData)
+      // reduce response middleware，回应的时候再走一遍回应中间件处理数据
+      const responseData = this._applyResponseMdl(responseRawData)
+  
+      return responseData
+    } catch (err) {
+      debugger
+      console.log(err)
+    }
 
-    // reduce response middleware，回应的时候再走一遍回应中间件处理数据
-    const responseData = this._applyResponseMdl(responseRawData)
-
-    return responseData
   }
 
   /**
    * 增加请求中间件
    * 
    * @param {Function} fn 中间件函数
+   * @param {number} order 中间件的序号
    */
-  useRequest(fn) {
+  useRequest(fn, order) {
     if (typeof fn !== 'function') {
       throw new Error('adapter middleware should be function.')
     }
-    this.requestMiddleware.push(fn.bind(this))
+    if (typeof order === 'undefined') {
+      this.requestMiddleware.push(fn.bind(this))
+    } else {
+      this.requestMiddleware.splice(order, 0, fn)
+    }
   }
   _applyRequestMdl(data) {
     return this.requestMiddleware.reduce((prev, next) => {
@@ -97,12 +118,17 @@ module.exports = class BaseAdapter extends Emmiter {
   /**
    * 增加回应的中间件
    * @param {Function} fn 中间件函数
+   * @param {number} order 中间件的序号
    */
-  useResponse(fn) {
+  useResponse(fn, order) {
     if (typeof fn !== 'function') {
       throw new Error('adapter middleware should be function.')
     }
-    this.responseMiddleware.push(fn.bind(this))
+    if (typeof order === 'undefined') {
+      this.responseMiddleware.push(fn.bind(this))
+    } else {
+      this.responseMiddleware.splice(order, 0, fn)
+    }
   }
   _applyResponseMdl(data) {
     return this.responseMiddleware.reduce((prev, next) => {
@@ -167,7 +193,7 @@ module.exports = class BaseAdapter extends Emmiter {
       throw new Error('send argument error.')
     }
 
-    option.seqno = option.seqno || this._getSeqno
+    option.seqno = option.seqno || this._getSeqno()
 
     // 回应中间件处理一遍
     // TIPS: 这里叫发给别的服务，所以叫做 response，要应用 回应中间件
@@ -175,9 +201,8 @@ module.exports = class BaseAdapter extends Emmiter {
 
     const responseData = await this.sendProgress(...[resdata, ...args])
 
-    // TIPS: 从别的服务发过来的回应数据，叫作请求，应用请求中间件
-    const result = this._applyRequestMdl(responseData)
-    return result
+    // TIPS: 从别的服务发过来的回应数据，叫作请求，应用请求中间件，但在 onData 执行过一遍了，无需再次执行
+    return responseData
   }
 
   /**

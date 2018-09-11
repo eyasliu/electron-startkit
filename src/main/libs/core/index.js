@@ -24,8 +24,6 @@ class Application extends Emmiter {
       TCPClient: require('./adapter/tcpclient'),
       TCPServer: require('./adapter/tcpserver'),
       IPC: require('./adapter/ipc'),
-      ClientAdapter: require('./adapter/client'),
-      ServerAdapter: require('./adapter/server'),
       Request: require('./adapter/request'),
       Response: require('./adapter/response'),
       Window: require('./window'),

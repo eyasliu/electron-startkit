@@ -4,7 +4,7 @@ const url = require('url')
 
 module.exports = class TCPClient extends Adapter {
   constructor(options) {
-    super()
+    super(options)
 
     const urlParse = url.parse(options.uri || options.url)
 
@@ -14,6 +14,9 @@ module.exports = class TCPClient extends Adapter {
     this.name = options.name || `Client ${this.adapterID}`
     this.host = options.host || urlParse.hostname
     this.port = options.port || urlParse.port
+    this.heartbeat = options.heartbeat
+    this.heartbeatInteval = options.heartbeatInteval || 5000
+    this.auth = options.auth || this.auth
 
     this.packer = options.packer || this.packer
     this.parser = options.parser || this.parser
@@ -21,10 +24,15 @@ module.exports = class TCPClient extends Adapter {
     this._reconnectTimeout = 1000 // 自动重连间隔时间
 
     this.instence = null
+    this.isAuth = false
   }
 
   init() {
     this._connect()
+  }
+
+  auth() {
+    return true
   }
 
   /**
@@ -51,6 +59,26 @@ module.exports = class TCPClient extends Adapter {
     this.instence.write(pkg)
   }
 
+  _startHeartbeat() {
+    if (this.heartbeat) {
+      this._heartbeatTimer = setInterval(() => {
+        this.heartbeat(this)
+      }, this.heartbeatInteval)
+    }
+  }
+  _stopHeartbeat() {
+    if (this._heartbeatTimer) {
+      clearInterval(this._heartbeatTimer)
+    }
+  }
+
+  _resetState() {
+    this.instence && this.instence.destroy()
+    this.instence = null
+    this._heartbeatTimer && clearInterval(this._heartbeatTimer)
+    this._heartbeatTimer = null
+    this.isAuth = false
+  }
   /**
    * 连接 socket 服务器
    */
@@ -62,7 +90,7 @@ module.exports = class TCPClient extends Adapter {
   }
 
   _reconnect() {
-    this.instence && this.instence.destroy()
+    this._resetState()
     this._connect()
   }
 
@@ -82,8 +110,11 @@ module.exports = class TCPClient extends Adapter {
   /**
    * socket 连接
    */
-  _onConnect() {
+  async _onConnect() {
     this.emit('adapter.connect')
+    this._startHeartbeat()
+    const res = await this.auth(this)
+    this.isAuth = res
   }
 
   /**
@@ -122,7 +153,7 @@ module.exports = class TCPClient extends Adapter {
    */
   _onClose() {
     this.emit('adapter.close')
-
+    this._resetState()
     // 断开重连
     setTimeout(() => {
       this._reconnect()

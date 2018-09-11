@@ -1,8 +1,9 @@
-const hprose = require('hprose')
 const noop = () => {}
 
+let hprose
 module.exports = class Hprose {
   constructor(options) {
+    hprose = require('hprose')
     // const hprose = require('hprose')
 
     this.uri = options.uri || options.url
